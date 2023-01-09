@@ -12,11 +12,14 @@ const kDefaultEndpoint = 'https://api.flutterflow.io/v0';
 void main(List<String> args) async {
   final parsedArguments = _parseArgs(args);
 
-  if (Platform.environment['FLUTTERFLOW_API_TOKEN']?.isEmpty ?? true) {
-    stderr.write('FLUTTERFLOW_API_TOKEN environment variable is not set\n');
+  final token =
+      parsedArguments['token'] ?? Platform.environment['FLUTTERFLOW_API_TOKEN'];
+
+  if (token?.isEmpty ?? true) {
+    stderr.write(
+        'Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.\n');
     exit(1);
   }
-  final token = Platform.environment['FLUTTERFLOW_API_TOKEN']!;
 
   await _exportCode(
     token: token,
@@ -44,6 +47,7 @@ ArgResults _parseArgs(List<String> args) {
 
   final parser = ArgParser()
     ..addOption('endpoint', abbr: 'e', help: 'Endpoint', hide: true)
+    ..addOption('token', abbr: 't', help: 'API Token')
     ..addFlag('help', negatable: false, abbr: 'h', help: 'Help')
     ..addCommand('export-code', exportCodeCommandParser);
 
@@ -74,7 +78,7 @@ ArgResults _parseArgs(List<String> args) {
 
   if (parsed.command!['project'] == null ||
       parsed.command!['project'].isEmpty) {
-    stderr.write('Option project is required\n');
+    stderr.write('Option --project is required\n');
     exit(1);
   }
 
