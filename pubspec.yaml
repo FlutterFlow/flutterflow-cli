@@ -1,14 +1,19 @@
 name: flutterflow_cli
-description: A sample command-line application.
-version: 1.0.0
-# homepage: https://www.example.com
+description: Command-line client for FlutterFlow
+version: 0.0.2
+homepage: https://github.com/FlutterFlow/flutterflow-cli
 
 environment:
-  sdk: '>=2.18.4 <3.0.0'
+  sdk: '>=2.17.0 <3.0.0'
 
-# dependencies:
-#   path: ^1.8.0
+dependencies:
+  archive: ^3.3.5
+  args: ^2.3.0
+  http: ^0.13.5
+  path: ^1.8.0
 
 dev_dependencies:
   lints: ^2.0.0
-  test: ^1.16.0
+
+executables:
+  flutterflow: flutterflow_cli
