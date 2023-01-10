@@ -1,3 +1,7 @@
+## 0.0.3
+
+- Switch to base64.
+
 ## 0.0.2
 
 - Lower min SDK version to 2.17.0.
