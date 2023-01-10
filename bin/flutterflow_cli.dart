@@ -103,7 +103,7 @@ Future _exportCode({
     );
 
     // Download actual code
-    final projectZipBytes = result['project_zip'].cast<int>();
+    final projectZipBytes = base64Decode(result['project_zip']);
     final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
     extractArchiveToDisk(projectFolder, destinationPath);
 
