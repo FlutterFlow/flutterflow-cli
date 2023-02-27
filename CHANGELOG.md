@@ -1,3 +1,7 @@
+## 0.0.4
+
+- Update API endpoint.
+
 ## 0.0.3
 
 - Switch to base64.

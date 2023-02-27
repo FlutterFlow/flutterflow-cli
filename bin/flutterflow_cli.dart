@@ -7,7 +7,7 @@ import 'package:args/args.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path_util;
 
-const kDefaultEndpoint = 'https://api.flutterflow.io/v0';
+const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
 
 void main(List<String> args) async {
   final parsedArguments = _parseArgs(args);
@@ -127,12 +127,10 @@ Future<dynamic> _callExport({
   required String projectId,
 }) async {
   final body = jsonEncode({
-    'data': {
-      'project': {
-        'path': 'projects/$projectId',
-      },
-      'token': token,
-    }
+    'project': {
+      'path': 'projects/$projectId',
+    },
+    'token': token,
   });
   final response = await client.post(
     Uri.https(endpoint.host, '${endpoint.path}/exportCode'),
@@ -149,7 +147,7 @@ Future<dynamic> _callExport({
     exit(1);
   }
 
-  final parsedResponse = jsonDecode(response.body)['result'];
+  final parsedResponse = jsonDecode(response.body);
   final success = parsedResponse['success'];
   if (success == null || !success) {
     if (parsedResponse['reason'] != null &&
