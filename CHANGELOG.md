@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Send API token as a header.
+
 ## 0.0.4
 
 - Update API endpoint.
