@@ -1,3 +1,7 @@
+## 0.0.6
+
+- Add "branch-name" parameter to enable specifying a branch for a given project when generating code.
+
 ## 0.0.5
 
 - Send API token as a header.
