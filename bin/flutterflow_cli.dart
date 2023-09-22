@@ -27,6 +27,7 @@ void main(List<String> args) async {
     projectId: parsedArguments.command!['project'],
     destinationPath: parsedArguments.command!['dest'],
     includeAssets: parsedArguments.command!['include-assets'],
+    branchName: parsedArguments.command!['branch-name'],
   );
 }
 
@@ -35,6 +36,8 @@ ArgResults _parseArgs(List<String> args) {
     ..addOption('project', abbr: 'p', help: 'Project id')
     ..addOption('dest',
         abbr: 'd', help: 'Destination directory', defaultsTo: '.')
+    ..addOption('branch-name',
+        abbr: 'b', help: '(Optional) Specifiy a branch name')
     ..addFlag(
       'include-assets',
       negatable: true,
@@ -91,6 +94,7 @@ Future _exportCode({
   required String projectId,
   required String destinationPath,
   required bool includeAssets,
+  String? branchName,
 }) async {
   final endpointUrl = Uri.parse(endpoint);
   final client = http.Client();
@@ -100,6 +104,7 @@ Future _exportCode({
       token: token,
       endpoint: endpointUrl,
       projectId: projectId,
+      branchName: branchName,
     );
 
     // Download actual code
@@ -125,12 +130,14 @@ Future<dynamic> _callExport({
   required String token,
   required Uri endpoint,
   required String projectId,
+  String? branchName,
 }) async {
   final body = jsonEncode({
     'project': {
       'path': 'projects/$projectId',
     },
     'token': token,
+    if (branchName != null) 'branch_name': branchName,
   });
   final response = await client.post(
     Uri.https(endpoint.host, '${endpoint.path}/exportCode'),
