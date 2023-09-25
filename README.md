@@ -15,3 +15,7 @@ API access is available only to users with active subscriptions. Visit https://a
 `flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token>`
 
 Alternatively, instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
+
+## Issues
+
+Please file any issues in [this repository](https://github.com/flutterflow/flutterflow-issues).

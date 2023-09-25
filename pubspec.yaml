@@ -3,6 +3,7 @@ description: >-
   Command-line client for FlutterFlow. Export code from FlutterFlow projects.
 version: 0.0.6
 homepage: https://github.com/FlutterFlow/flutterflow-cli
+issue_tracker: https://github.com/flutterflow/flutterflow-issues
 
 environment:
   sdk: '>=2.17.0 <3.0.0'
