@@ -1,3 +1,7 @@
+## 0.0.7
+
+- Fix handling non-existent assets.
+
 ## 0.0.6
 
 - Add "branch-name" parameter to enable specifying a branch for a given project when generating code.
