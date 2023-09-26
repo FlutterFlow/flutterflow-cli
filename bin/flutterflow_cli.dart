@@ -182,8 +182,12 @@ Future _downloadAssets({
     final fileDest = path_util.join(destinationPath, path);
     try {
       final response = await client.get(Uri.parse(url));
-      final file = File(fileDest);
-      await file.writeAsBytes(response.bodyBytes);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final file = File(fileDest);
+        await file.writeAsBytes(response.bodyBytes);
+      } else {
+        stderr.write('Error downloading asset $path. This is probably fine.\n');
+      }
     } catch (_) {
       stderr.write('Error downloading asset $path. This is probably fine.\n');
     }
