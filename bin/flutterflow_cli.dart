@@ -28,6 +28,7 @@ void main(List<String> args) async {
     destinationPath: parsedArguments.command!['dest'],
     includeAssets: parsedArguments.command!['include-assets'],
     branchName: parsedArguments.command!['branch-name'],
+    fix: parsedArguments.command!['fix'],
   );
 }
 
@@ -45,6 +46,12 @@ ArgResults _parseArgs(List<String> args) {
           'We recommend setting this flag only when calling this command '
           'for the first time or after updating assets.\n'
           'Downloading code without assets is typically much faster.',
+      defaultsTo: false,
+    )
+    ..addFlag(
+      'fix',
+      negatable: true,
+      help: 'Run "dart fix" on the downloaded code.',
       defaultsTo: false,
     );
 
@@ -94,6 +101,7 @@ Future _exportCode({
   required String projectId,
   required String destinationPath,
   required bool includeAssets,
+  required bool fix,
   String? branchName,
 }) async {
   final endpointUrl = Uri.parse(endpoint);
@@ -112,13 +120,22 @@ Future _exportCode({
     final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
     extractArchiveToDisk(projectFolder, destinationPath);
 
-    // Download assets
-    if (includeAssets) {
-      await _downloadAssets(
-        client: client,
-        destinationPath: destinationPath,
-        assetDescriptions: result['assets'],
-      );
+    final postCodeGenerationFutures = <Future>[
+      if (fix)
+        _runFix(
+          destinationPath: destinationPath,
+          projectFolder: projectFolder,
+        ),
+      if (includeAssets)
+        _downloadAssets(
+          client: client,
+          destinationPath: destinationPath,
+          assetDescriptions: result['assets'],
+        ),
+    ];
+
+    if (postCodeGenerationFutures.isNotEmpty) {
+      await Future.wait(postCodeGenerationFutures);
     }
   } finally {
     client.close();
@@ -193,4 +210,46 @@ Future _downloadAssets({
     }
   });
   await Future.wait(futures);
+}
+
+Future _runFix({
+  required String destinationPath,
+  required Archive projectFolder,
+}) async {
+  try {
+    if (projectFolder.isEmpty) {
+      return;
+    }
+    final firstFilePath = projectFolder.files.first.name;
+    final directory = path_util.split(firstFilePath).first;
+
+    final pubGetResult = await Process.run(
+      'flutter',
+      ['pub', 'get'],
+      workingDirectory: path_util.join(destinationPath, directory),
+      runInShell: true,
+      stdoutEncoding: utf8,
+      stderrEncoding: utf8,
+    );
+    if (pubGetResult.exitCode != 0) {
+      stderr.write(
+          '"flutter pub get" failed with code ${pubGetResult.exitCode}, stderr:\n${pubGetResult.stderr}\n');
+      return;
+    }
+
+    final dartFixResult = await Process.run(
+      'dart',
+      ['fix', '--apply', directory],
+      workingDirectory: destinationPath,
+      runInShell: true,
+      stdoutEncoding: utf8,
+      stderrEncoding: utf8,
+    );
+    if (dartFixResult.exitCode != 0) {
+      stderr.write(
+          '"dart fix" failed with code ${dartFixResult.exitCode}, stderr:\n${dartFixResult.stderr}\n');
+    }
+  } catch (e) {
+    stderr.write('Error running "dart fix": $e\n');
+  }
 }
