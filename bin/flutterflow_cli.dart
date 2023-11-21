@@ -37,7 +37,7 @@ ArgResults _parseArgs(List<String> args) {
     ..addOption('dest',
         abbr: 'd', help: 'Destination directory', defaultsTo: '.')
     ..addOption('branch-name',
-        abbr: 'b', help: '(Optional) Specifiy a branch name')
+        abbr: 'b', help: '(Optional) Specify a branch name')
     ..addFlag(
       'include-assets',
       negatable: true,

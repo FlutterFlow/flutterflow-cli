@@ -16,6 +16,16 @@ API access is available only to users with active subscriptions. Visit https://a
 
 Alternatively, instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
 
+## Flags
+
+| Flag      | Abbreviation | Usage |
+| ----------- | ----------- | ----------- |
+| `--project`      | `-p`       | [Required] Project ID |
+| `--token`      | `-t`       | [Required or environment variable] API Token |
+| `--dest`   | `-d`        | [Optional] Output folder |
+| `--[no-]include-assets`   | None        | [Optional] Whether to include media assets. Defaults to `false` |
+| `--branch-name`   | `-b`        | [Optional] Which branch to download. Defaults to `main` |
+
 ## Issues
 
 Please file any issues in [this repository](https://github.com/flutterflow/flutterflow-issues).
