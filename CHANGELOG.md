@@ -1,3 +1,7 @@
+## 0.0.8
+
+- Add `--fix` option.
+
 ## 0.0.7
 
 - Fix handling non-existent assets.
