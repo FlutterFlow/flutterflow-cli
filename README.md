@@ -12,7 +12,7 @@ API access is available only to users with active subscriptions. Visit https://a
 
 ## Usage
 
-`flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token>`
+`flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token> --[no-]fix`
 
 Alternatively, instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
 
@@ -25,6 +25,7 @@ Alternatively, instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` 
 | `--dest`   | `-d`        | [Optional] Output folder |
 | `--[no-]include-assets`   | None        | [Optional] Whether to include media assets. Defaults to `false` |
 | `--branch-name`   | `-b`        | [Optional] Which branch to download. Defaults to `main` |
+| `--[no-]fix`   | None        | [Optional] Whether to run `dart fix` on the downloaded code. Defaults to `false`. |
 
 ## Issues
 
