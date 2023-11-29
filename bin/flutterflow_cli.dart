@@ -28,6 +28,7 @@ void main(List<String> args) async {
     destinationPath: parsedArguments.command!['dest'],
     includeAssets: parsedArguments.command!['include-assets'],
     branchName: parsedArguments.command!['branch-name'],
+    unzipToParentFolder: parsedArguments.command!['parent-folder'],
     fix: parsedArguments.command!['fix'],
   );
 }
@@ -53,6 +54,15 @@ ArgResults _parseArgs(List<String> args) {
       negatable: true,
       help: 'Run "dart fix" on the downloaded code.',
       defaultsTo: false,
+    )
+    ..addFlag(
+      'parent-folder',
+      negatable: true,
+      help: 'Download into a sub-folder. By default, project is downloaded \n'
+          'into a folder named <project>. \n Setting this flag to false will '
+          'download all project code directly into the specified directory, '
+          'or the current directory if --dest is not set.',
+      defaultsTo: true,
     );
 
   final parser = ArgParser()
@@ -101,6 +111,7 @@ Future _exportCode({
   required String projectId,
   required String destinationPath,
   required bool includeAssets,
+  required bool unzipToParentFolder,
   required bool fix,
   String? branchName,
 }) async {
@@ -118,7 +129,12 @@ Future _exportCode({
     // Download actual code
     final projectZipBytes = base64Decode(result['project_zip']);
     final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
-    extractArchiveToDisk(projectFolder, destinationPath);
+
+    if (unzipToParentFolder) {
+      extractArchiveToDisk(projectFolder, destinationPath);
+    } else {
+      extractArchiveToCurrentDirectory(projectFolder, destinationPath);
+    }
 
     final postCodeGenerationFutures = <Future>[
       if (fix)
@@ -131,6 +147,7 @@ Future _exportCode({
           client: client,
           destinationPath: destinationPath,
           assetDescriptions: result['assets'],
+          unzipToParentFolder: unzipToParentFolder,
         ),
     ];
 
@@ -139,6 +156,33 @@ Future _exportCode({
     }
   } finally {
     client.close();
+  }
+}
+
+// Extract files to the specified directory without a project-named
+// parent folder.
+void extractArchiveToCurrentDirectory(
+  Archive projectFolder,
+  String destinationPath,
+) {
+  for (final file in projectFolder.files) {
+    if (file.isFile) {
+      final data = file.content as List<int>;
+      final filename = file.name;
+
+      // Remove the `<project>/` prefix from path names.
+      final parentFolderIndex = filename[0] == '/'
+          ? (filename.substring(1)).indexOf('/')
+          : filename.indexOf('/');
+      final subStrDirectory = parentFolderIndex == -1
+          ? filename
+          : filename.substring(parentFolderIndex + 1);
+      final path = path_util.join(destinationPath, subStrDirectory);
+
+      final fileOut = File(path);
+      fileOut.createSync(recursive: true);
+      fileOut.writeAsBytesSync(data);
+    }
   }
 }
 
@@ -192,9 +236,18 @@ Future _downloadAssets({
   required final http.Client client,
   required String destinationPath,
   required List<dynamic> assetDescriptions,
+  required unzipToParentFolder,
 }) async {
   final futures = assetDescriptions.map((assetDescription) async {
-    final path = assetDescription['path'];
+    String path = assetDescription['path'];
+
+    if (!unzipToParentFolder) {
+      final parentFolderIndex =
+          path[0] == '/' ? (path.substring(1)).indexOf('/') : path.indexOf('/');
+      path = parentFolderIndex == -1
+          ? path
+          : path.substring(parentFolderIndex + 1);
+    }
     final url = assetDescription['url'];
     final fileDest = path_util.join(destinationPath, path);
     try {

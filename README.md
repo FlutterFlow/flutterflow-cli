@@ -26,6 +26,7 @@ Alternatively, instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` 
 | `--[no-]include-assets`   | None        | [Optional] Whether to include media assets. Defaults to `false` |
 | `--branch-name`   | `-b`        | [Optional] Which branch to download. Defaults to `main` |
 | `--[no-]fix`   | None        | [Optional] Whether to run `dart fix` on the downloaded code. Defaults to `false`. |
+| `--[no-]parent-folder`   | None        | [Optional] Whether to download code into a project-named sub-folder. If true, downloads all project files directly to the specified directory. Defaults to `false`. |
 
 ## Issues
 
