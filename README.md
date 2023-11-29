@@ -12,7 +12,7 @@ API access is available only to users with active subscriptions. Visit https://a
 
 ## Usage
 
-`flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token> --[no-]fix`
+`flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token> --[no-]fix --[no]-parent-folder`
 
 Alternatively, instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
 

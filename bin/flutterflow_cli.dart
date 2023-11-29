@@ -59,7 +59,7 @@ ArgResults _parseArgs(List<String> args) {
       'parent-folder',
       negatable: true,
       help: 'Download into a sub-folder. By default, project is downloaded \n'
-          'into a folder named <project>. \n Setting this flag to false will '
+          'into a folder named <project>.\nSetting this flag to false will '
           'download all project code directly into the specified directory, '
           'or the current directory if --dest is not set.',
       defaultsTo: true,
@@ -141,6 +141,7 @@ Future _exportCode({
         _runFix(
           destinationPath: destinationPath,
           projectFolder: projectFolder,
+          unzipToParentFolder: unzipToParentFolder,
         ),
       if (includeAssets)
         _downloadAssets(
@@ -170,14 +171,12 @@ void extractArchiveToCurrentDirectory(
       final data = file.content as List<int>;
       final filename = file.name;
 
-      // Remove the `<project>/` prefix from path names.
-      final parentFolderIndex = filename[0] == '/'
-          ? (filename.substring(1)).indexOf('/')
-          : filename.indexOf('/');
-      final subStrDirectory = parentFolderIndex == -1
-          ? filename
-          : filename.substring(parentFolderIndex + 1);
-      final path = path_util.join(destinationPath, subStrDirectory);
+      // Remove the `<project>` prefix from paths.
+      final path = path_util.join(
+          destinationPath,
+          path_util.joinAll(
+            path_util.split(filename).sublist(1),
+          ));
 
       final fileOut = File(path);
       fileOut.createSync(recursive: true);
@@ -242,18 +241,16 @@ Future _downloadAssets({
     String path = assetDescription['path'];
 
     if (!unzipToParentFolder) {
-      final parentFolderIndex =
-          path[0] == '/' ? (path.substring(1)).indexOf('/') : path.indexOf('/');
-      path = parentFolderIndex == -1
-          ? path
-          : path.substring(parentFolderIndex + 1);
+      path = path_util.joinAll(
+        path_util.split(path).sublist(1),
+      );
     }
     final url = assetDescription['url'];
     final fileDest = path_util.join(destinationPath, path);
     try {
       final response = await client.get(Uri.parse(url));
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        final file = File(fileDest);
+        final filpushe = File(fileDest);
         await file.writeAsBytes(response.bodyBytes);
       } else {
         stderr.write('Error downloading asset $path. This is probably fine.\n');
@@ -268,6 +265,7 @@ Future _downloadAssets({
 Future _runFix({
   required String destinationPath,
   required Archive projectFolder,
+  required unzipToParentFolder,
 }) async {
   try {
     if (projectFolder.isEmpty) {
@@ -276,10 +274,14 @@ Future _runFix({
     final firstFilePath = projectFolder.files.first.name;
     final directory = path_util.split(firstFilePath).first;
 
+    final workingDirectory = unzipToParentFolder
+        ? path_util.join(destinationPath, directory)
+        : destinationPath;
+
     final pubGetResult = await Process.run(
       'flutter',
       ['pub', 'get'],
-      workingDirectory: path_util.join(destinationPath, directory),
+      workingDirectory: workingDirectory,
       runInShell: true,
       stdoutEncoding: utf8,
       stderrEncoding: utf8,
