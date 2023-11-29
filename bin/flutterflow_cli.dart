@@ -241,9 +241,11 @@ Future _downloadAssets({
     String path = assetDescription['path'];
 
     if (!unzipToParentFolder) {
-      path = path_util.joinAll(
-        path_util.split(path).sublist(1),
-      );
+      final parentFolderIndex =
+          path[0] == '/' ? (path.substring(1)).indexOf('/') : path.indexOf('/');
+      path = parentFolderIndex == -1
+          ? path
+          : path.substring(parentFolderIndex + 1);
     }
     final url = assetDescription['url'];
     final fileDest = path_util.join(destinationPath, path);
