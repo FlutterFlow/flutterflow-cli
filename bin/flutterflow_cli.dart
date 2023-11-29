@@ -241,18 +241,16 @@ Future _downloadAssets({
     String path = assetDescription['path'];
 
     if (!unzipToParentFolder) {
-      final parentFolderIndex =
-          path[0] == '/' ? (path.substring(1)).indexOf('/') : path.indexOf('/');
-      path = parentFolderIndex == -1
-          ? path
-          : path.substring(parentFolderIndex + 1);
+      path = path_util.joinAll(
+        path_util.split(path).sublist(1),
+      );
     }
     final url = assetDescription['url'];
     final fileDest = path_util.join(destinationPath, path);
     try {
       final response = await client.get(Uri.parse(url));
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        final file = File(fileDest);
+        final filpushe = File(fileDest);
         await file.writeAsBytes(response.bodyBytes);
       } else {
         stderr.write('Error downloading asset $path. This is probably fine.\n');
