@@ -1,3 +1,7 @@
+## 0.0.9
+
+- Allow importing it inside a Dart/Flutter project.
+
 ## 0.0.8
 
 - Add `--fix` option.
