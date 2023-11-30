@@ -7,14 +7,16 @@ import 'package:path/path.dart' as path_util;
 
 const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
 
-class FlutterFlowCli {
-  Future<String?> export({
+class FlutterFlowApi {
+  static Future<String?> export({
     required String token,
     required String projectId,
     required String destinationPath,
     required bool includeAssets,
     String endpoint = kDefaultEndpoint,
     String? branchName,
+    bool unzipToParentFolder = false,
+    bool fix = false,
   }) =>
       exportCode(
         token: token,
@@ -23,8 +25,8 @@ class FlutterFlowCli {
         destinationPath: destinationPath,
         includeAssets: includeAssets,
         branchName: branchName,
-        unzipToParentFolder: false,
-        fix: false,
+        unzipToParentFolder: unzipToParentFolder,
+        fix: fix,
       );
 }
 
