@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutterflow_cli/scr/flutterflow_cli_base.dart';
+import 'package:flutterflow_cli/src/flutterflow_cli_base.dart';
 
 const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
 
