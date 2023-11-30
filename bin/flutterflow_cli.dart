@@ -11,6 +11,9 @@ void main(List<String> args) async {
   final token =
       parsedArguments['token'] ?? Platform.environment['FLUTTERFLOW_API_TOKEN'];
 
+  final project = parsedArguments.command!['project'] ??
+      Platform.environment['FLUTTERFLOW_PROJECT'];
+
   if (token?.isEmpty ?? true) {
     stderr.write(
         'Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.\n');
@@ -20,10 +23,11 @@ void main(List<String> args) async {
   await exportCode(
     token: token,
     endpoint: parsedArguments['endpoint'] ?? kDefaultEndpoint,
-    projectId: parsedArguments.command!['project'],
+    projectId: project,
     destinationPath: parsedArguments.command!['dest'],
     includeAssets: parsedArguments.command!['include-assets'],
     branchName: parsedArguments.command!['branch-name'],
+    unzipToParentFolder: parsedArguments.command!['parent-folder'],
     fix: parsedArguments.command!['fix'],
   );
 }
@@ -49,6 +53,15 @@ ArgResults _parseArgs(List<String> args) {
       negatable: true,
       help: 'Run "dart fix" on the downloaded code.',
       defaultsTo: false,
+    )
+    ..addFlag(
+      'parent-folder',
+      negatable: true,
+      help: 'Download into a sub-folder. By default, project is downloaded \n'
+          'into a folder named <project>.\nSetting this flag to false will '
+          'download all project code directly into the specified directory, '
+          'or the current directory if --dest is not set.',
+      defaultsTo: true,
     );
 
   final parser = ArgParser()
@@ -84,9 +97,9 @@ ArgResults _parseArgs(List<String> args) {
 
   if (parsed.command!['project'] == null ||
       parsed.command!['project'].isEmpty) {
-    stderr.write('Option --project is required\n');
+    stderr.write(
+        'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n');
     exit(1);
   }
-
   return parsed;
 }

@@ -23,6 +23,7 @@ class FlutterFlowCli {
         destinationPath: destinationPath,
         includeAssets: includeAssets,
         branchName: branchName,
+        unzipToParentFolder: false,
         fix: false,
       );
 }
@@ -33,6 +34,7 @@ Future<String?> exportCode({
   required String projectId,
   required String destinationPath,
   required bool includeAssets,
+  required bool unzipToParentFolder,
   required bool fix,
   String? branchName,
 }) async {
@@ -51,6 +53,13 @@ Future<String?> exportCode({
     // Download actual code
     final projectZipBytes = base64Decode(result['project_zip']);
     final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
+
+    if (unzipToParentFolder) {
+      extractArchiveToDisk(projectFolder, destinationPath);
+    } else {
+      extractArchiveToCurrentDirectory(projectFolder, destinationPath);
+    }
+
     folderName = projectFolder.first.name;
     extractArchiveToDisk(projectFolder, destinationPath);
 
@@ -59,6 +68,7 @@ Future<String?> exportCode({
         _runFix(
           destinationPath: destinationPath,
           projectFolder: projectFolder,
+          unzipToParentFolder: unzipToParentFolder,
         ),
       if (includeAssets)
         _downloadAssets(
@@ -75,6 +85,31 @@ Future<String?> exportCode({
     client.close();
   }
   return folderName;
+}
+
+// Extract files to the specified directory without a project-named
+// parent folder.
+void extractArchiveToCurrentDirectory(
+  Archive projectFolder,
+  String destinationPath,
+) {
+  for (final file in projectFolder.files) {
+    if (file.isFile) {
+      final data = file.content as List<int>;
+      final filename = file.name;
+
+      // Remove the `<project>` prefix from paths.
+      final path = path_util.join(
+          destinationPath,
+          path_util.joinAll(
+            path_util.split(filename).sublist(1),
+          ));
+
+      final fileOut = File(path);
+      fileOut.createSync(recursive: true);
+      fileOut.writeAsBytesSync(data);
+    }
+  }
 }
 
 Future<dynamic> _callExport({
@@ -150,6 +185,7 @@ Future _downloadAssets({
 Future _runFix({
   required String destinationPath,
   required Archive projectFolder,
+  required unzipToParentFolder,
 }) async {
   try {
     if (projectFolder.isEmpty) {
@@ -158,10 +194,14 @@ Future _runFix({
     final firstFilePath = projectFolder.files.first.name;
     final directory = path_util.split(firstFilePath).first;
 
+    final workingDirectory = unzipToParentFolder
+        ? path_util.join(destinationPath, directory)
+        : destinationPath;
+
     final pubGetResult = await Process.run(
       'flutter',
       ['pub', 'get'],
-      workingDirectory: path_util.join(destinationPath, directory),
+      workingDirectory: workingDirectory,
       runInShell: true,
       stdoutEncoding: utf8,
       stderrEncoding: utf8,
