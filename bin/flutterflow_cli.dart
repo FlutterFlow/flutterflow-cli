@@ -15,18 +15,12 @@ void main(List<String> args) async {
   final token =
       parsedArguments['token'] ?? Platform.environment['FLUTTERFLOW_API_TOKEN'];
 
-  final project =
-      parsedArguments['project'] ?? Platform.environment['FLUTTERFLOW_PROJECT'];
+  final project = parsedArguments.command!['project'] ??
+      Platform.environment['FLUTTERFLOW_PROJECT'];
 
   if (token?.isEmpty ?? true) {
     stderr.write(
         'Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.\n');
-    exit(1);
-  }
-
-  if (project?.isEmpty ?? true) {
-    stderr.write(
-        'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n');
     exit(1);
   }
 
@@ -44,6 +38,7 @@ void main(List<String> args) async {
 
 ArgResults _parseArgs(List<String> args) {
   final exportCodeCommandParser = ArgParser()
+    ..addOption('project', abbr: 'p', help: 'Project id')
     ..addOption('dest',
         abbr: 'd', help: 'Destination directory', defaultsTo: '.')
     ..addOption('branch-name',
@@ -76,7 +71,6 @@ ArgResults _parseArgs(List<String> args) {
   final parser = ArgParser()
     ..addOption('endpoint', abbr: 'e', help: 'Endpoint', hide: true)
     ..addOption('token', abbr: 't', help: 'API Token')
-    ..addOption('project', abbr: 'p', help: 'Project id')
     ..addFlag('help', negatable: false, abbr: 'h', help: 'Help')
     ..addCommand('export-code', exportCodeCommandParser);
 
@@ -105,6 +99,12 @@ ArgResults _parseArgs(List<String> args) {
     exit(1);
   }
 
+  if (parsed.command!['project'] == null ||
+      parsed.command!['project'].isEmpty) {
+    stderr.write(
+        'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n');
+    exit(1);
+  }
   return parsed;
 }
 
