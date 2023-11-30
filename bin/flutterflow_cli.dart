@@ -15,16 +15,25 @@ void main(List<String> args) async {
   final token =
       parsedArguments['token'] ?? Platform.environment['FLUTTERFLOW_API_TOKEN'];
 
+  final project =
+      parsedArguments['project'] ?? Platform.environment['FLUTTERFLOW_PROJECT'];
+
   if (token?.isEmpty ?? true) {
     stderr.write(
         'Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.\n');
     exit(1);
   }
 
+  if (project?.isEmpty ?? true) {
+    stderr.write(
+        'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n');
+    exit(1);
+  }
+
   await _exportCode(
     token: token,
     endpoint: parsedArguments['endpoint'] ?? kDefaultEndpoint,
-    projectId: parsedArguments.command!['project'],
+    projectId: project,
     destinationPath: parsedArguments.command!['dest'],
     includeAssets: parsedArguments.command!['include-assets'],
     branchName: parsedArguments.command!['branch-name'],
@@ -35,7 +44,6 @@ void main(List<String> args) async {
 
 ArgResults _parseArgs(List<String> args) {
   final exportCodeCommandParser = ArgParser()
-    ..addOption('project', abbr: 'p', help: 'Project id')
     ..addOption('dest',
         abbr: 'd', help: 'Destination directory', defaultsTo: '.')
     ..addOption('branch-name',
@@ -68,6 +76,7 @@ ArgResults _parseArgs(List<String> args) {
   final parser = ArgParser()
     ..addOption('endpoint', abbr: 'e', help: 'Endpoint', hide: true)
     ..addOption('token', abbr: 't', help: 'API Token')
+    ..addOption('project', abbr: 'p', help: 'Project id')
     ..addFlag('help', negatable: false, abbr: 'h', help: 'Help')
     ..addCommand('export-code', exportCodeCommandParser);
 
@@ -93,12 +102,6 @@ ArgResults _parseArgs(List<String> args) {
   if (parsed.command == null) {
     print(parser.usage);
     print('Available commands: ${parser.commands.keys.join(', ')}.');
-    exit(1);
-  }
-
-  if (parsed.command!['project'] == null ||
-      parsed.command!['project'].isEmpty) {
-    stderr.write('Option --project is required\n');
     exit(1);
   }
 
