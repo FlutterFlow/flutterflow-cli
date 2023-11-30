@@ -7,7 +7,7 @@ dart pub global activate flutterflow_cli
 
 Base command with required flags:
 ```sh
-`flutterflow export-code --project ProjectID --token APIToken`
+flutterflow export-code --project ProjectID --token APIToken
 ```
 See [README](https://pub.dev/packages/flutterflow_cli) for the full list of available flags.
 
