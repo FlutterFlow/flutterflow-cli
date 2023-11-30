@@ -1,6 +1,6 @@
 # FlutterFlow CLI
 
-FlutterFlow CLI client, download code 
+FlutterFlow CLI client: download code from your FlutterFlow project to your device for local running or deployment.
 
 ## API Token
 
