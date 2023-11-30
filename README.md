@@ -1,6 +1,6 @@
 # FlutterFlow CLI
 
-FlutterFlow CLI client. Currently it only allows exporting code from FlutterFlow.
+FlutterFlow CLI client, download code 
 
 ## API Token
 
