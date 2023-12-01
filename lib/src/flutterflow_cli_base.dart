@@ -24,7 +24,7 @@ class FlutterFlowApi {
   /// * [fix] flag indicates whether to fix any issues in the exported code.
   ///
   /// Returns a [Future] that completes with the path to the exported code, or
-  /// `null` if the export fails.
+  /// throws an error if the export fails.
   static Future<String?> export({
     required String token,
     required String projectId,
