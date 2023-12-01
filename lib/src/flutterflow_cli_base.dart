@@ -7,7 +7,24 @@ import 'package:path/path.dart' as path_util;
 
 const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
 
+/// The `FlutterFlowApi` class provides methods for exporting code from a
+/// FlutterFlow project.
 class FlutterFlowApi {
+  /// Exports the code from a FlutterFlow project.
+  ///
+  /// * [token] is the FlutterFlow API token for accessing the project.
+  /// * [projectId] is the ID of the project to export.
+  /// * [destinationPath] is the path where the exported code will be saved.
+  /// * [includeAssets] flag indicates whether to include project assets
+  /// in the export.
+  /// * [endpoint] is the API endpoint to use for exporting the code.
+  /// * [branchName] is the name of the branch to export from (optional).
+  /// * [unzipToParentFolder] flag indicates whether to unzip the exported code
+  /// to the parent folder.
+  /// * [fix] flag indicates whether to fix any issues in the exported code.
+  ///
+  /// Returns a [Future] that completes with the path to the exported code, or
+  /// throws an error if the export fails.
   static Future<String?> export({
     required String token,
     required String projectId,
