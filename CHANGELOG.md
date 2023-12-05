@@ -1,3 +1,7 @@
+
+## 0.0.9+1
+
+- Adds bug fix to duplicate archiving.
 ## 0.0.9
 
 - Add `--[no-]-parent option`.
