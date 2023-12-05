@@ -1,5 +1,5 @@
 
-## 0.0.9+1
+## 0.0.10
 
 - Adds bug fix to duplicate archiving.
 
