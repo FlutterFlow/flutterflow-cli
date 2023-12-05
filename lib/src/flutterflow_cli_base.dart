@@ -68,7 +68,6 @@ Future<String?> exportCode({
       projectId: projectId,
       branchName: branchName,
     );
-
     // Download actual code
     final projectZipBytes = base64Decode(result['project_zip']);
     final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
@@ -80,7 +79,6 @@ Future<String?> exportCode({
     }
 
     folderName = projectFolder.first.name;
-    extractArchiveToDisk(projectFolder, destinationPath);
 
     final postCodeGenerationFutures = <Future>[
       if (fix)
@@ -94,6 +92,7 @@ Future<String?> exportCode({
           client: client,
           destinationPath: destinationPath,
           assetDescriptions: result['assets'],
+          unzipToParentFolder: unzipToParentFolder,
         ),
     ];
 
@@ -181,9 +180,16 @@ Future _downloadAssets({
   required final http.Client client,
   required String destinationPath,
   required List<dynamic> assetDescriptions,
+  required unzipToParentFolder,
 }) async {
   final futures = assetDescriptions.map((assetDescription) async {
-    final path = assetDescription['path'];
+    String path = assetDescription['path'];
+
+    if (!unzipToParentFolder) {
+      path = path_util.joinAll(
+        path_util.split(path).sublist(1),
+      );
+    }
     final url = assetDescription['url'];
     final fileDest = path_util.join(destinationPath, path);
     try {
