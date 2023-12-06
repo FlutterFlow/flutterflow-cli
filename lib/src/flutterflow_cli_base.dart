@@ -218,7 +218,6 @@ Future _runFix({
     }
     final firstFilePath = projectFolder.files.first.name;
     final directory = path_util.split(firstFilePath).first;
-
     final workingDirectory = unzipToParentFolder
         ? path_util.join(destinationPath, directory)
         : destinationPath;
@@ -236,10 +235,10 @@ Future _runFix({
           '"flutter pub get" failed with code ${pubGetResult.exitCode}, stderr:\n${pubGetResult.stderr}\n');
       return;
     }
-
+    final fixDirectory = unzipToParentFolder ? directory : '';
     final dartFixResult = await Process.run(
       'dart',
-      ['fix', '--apply', directory],
+      ['fix', '--apply', fixDirectory],
       workingDirectory: destinationPath,
       runInShell: true,
       stdoutEncoding: utf8,
