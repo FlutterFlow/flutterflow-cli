@@ -218,6 +218,7 @@ Future _runFix({
     }
     final firstFilePath = projectFolder.files.first.name;
     final directory = path_util.split(firstFilePath).first;
+
     final workingDirectory = unzipToParentFolder
         ? path_util.join(destinationPath, directory)
         : destinationPath;
