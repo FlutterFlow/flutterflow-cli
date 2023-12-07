@@ -236,10 +236,10 @@ Future _runFix({
           '"flutter pub get" failed with code ${pubGetResult.exitCode}, stderr:\n${pubGetResult.stderr}\n');
       return;
     }
-
+    final fixDirectory = unzipToParentFolder ? directory : '';
     final dartFixResult = await Process.run(
       'dart',
-      ['fix', '--apply', directory],
+      ['fix', '--apply', fixDirectory],
       workingDirectory: destinationPath,
       runInShell: true,
       stdoutEncoding: utf8,
