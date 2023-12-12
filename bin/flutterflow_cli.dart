@@ -14,15 +14,32 @@ void main(List<String> args) async {
   final project = parsedArguments.command!['project'] ??
       Platform.environment['FLUTTERFLOW_PROJECT'];
 
+  if (parsedArguments['endpoint'] != null &&
+      parsedArguments['environment'] != null) {
+    stderr.write(
+        'Only one of --endpoint and --environment options can be set.\n');
+    exit(1);
+  }
+
   if (token?.isEmpty ?? true) {
     stderr.write(
         'Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.\n');
     exit(1);
   }
 
+  late String endpoint;
+  if (parsedArguments['endpoint'] != null) {
+    endpoint = parsedArguments['endpoint'];
+  } else if (parsedArguments['environment'] != null) {
+    endpoint =
+        "https://api-${parsedArguments['environment']}.flutterflow.io/v1";
+  } else {
+    endpoint = kDefaultEndpoint;
+  }
+
   await exportCode(
     token: token,
-    endpoint: parsedArguments['endpoint'] ?? kDefaultEndpoint,
+    endpoint: endpoint,
     projectId: project,
     destinationPath: parsedArguments.command!['dest'],
     includeAssets: parsedArguments.command!['include-assets'],
@@ -66,6 +83,7 @@ ArgResults _parseArgs(List<String> args) {
 
   final parser = ArgParser()
     ..addOption('endpoint', abbr: 'e', help: 'Endpoint', hide: true)
+    ..addOption('environment', help: 'Environment', hide: true)
     ..addOption('token', abbr: 't', help: 'API Token')
     ..addFlag('help', negatable: false, abbr: 'h', help: 'Help')
     ..addCommand('export-code', exportCodeCommandParser);
