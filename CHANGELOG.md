@@ -1,3 +1,7 @@
+## 0.0.12
+
+- Add `--as-module` option.
+
 ## 0.0.11
 
 - Fix `--fix` `--no-parent-folder` edge case.
