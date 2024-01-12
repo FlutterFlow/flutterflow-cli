@@ -14,7 +14,7 @@ void main(List<String> args) async {
   final project = parsedArguments.command!['project'] ??
       Platform.environment['FLUTTERFLOW_PROJECT'];
 
-  if (project == null) {
+  if (project == null || project.isEmpty) {
     stderr.write(
         'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n');
     exit(1);
