@@ -196,6 +196,7 @@ Future _downloadAssets({
       final response = await client.get(Uri.parse(url));
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final file = File(fileDest);
+        await file.parent.create(recursive: true);
         await file.writeAsBytes(response.bodyBytes);
       } else {
         stderr.write('Error downloading asset $path. This is probably fine.\n');
