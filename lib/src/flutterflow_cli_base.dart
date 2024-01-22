@@ -57,7 +57,7 @@ Future<String?> exportCode({
   required bool includeAssets,
   required bool unzipToParentFolder,
   required bool fix,
-  required exportAsModule,
+  required bool exportAsModule,
   String? branchName,
 }) async {
   final endpointUrl = Uri.parse(endpoint);

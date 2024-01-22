@@ -83,7 +83,9 @@ ArgResults _parseArgs(List<String> args) {
     )
     ..addFlag(
       'as-module',
+      negatable: true,
       help: 'Generate the project as a Flutter module.',
+      defaultsTo: false,
     );
 
   final parser = ArgParser()
