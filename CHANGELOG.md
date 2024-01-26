@@ -1,3 +1,7 @@
+## 0.0.13
+
+- Add `--as-module` option.
+
 ## 0.0.12
 
 - Fix `FLUTTERFLOW_PROJECT` environment variable issue.

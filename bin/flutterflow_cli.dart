@@ -52,6 +52,7 @@ void main(List<String> args) async {
     branchName: parsedArguments.command!['branch-name'],
     unzipToParentFolder: parsedArguments.command!['parent-folder'],
     fix: parsedArguments.command!['fix'],
+    exportAsModule: parsedArguments.command!['as-module'],
   );
 }
 
@@ -85,6 +86,12 @@ ArgResults _parseArgs(List<String> args) {
           'download all project code directly into the specified directory, '
           'or the current directory if --dest is not set.',
       defaultsTo: true,
+    )
+    ..addFlag(
+      'as-module',
+      negatable: true,
+      help: 'Generate the project as a Flutter module.',
+      defaultsTo: false,
     );
 
   final parser = ArgParser()
