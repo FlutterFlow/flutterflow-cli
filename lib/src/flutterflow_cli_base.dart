@@ -46,6 +46,7 @@ class FlutterFlowApi {
         unzipToParentFolder: unzipToParentFolder,
         fix: fix,
         exportAsModule: exportAsModule,
+        isCli: false,
       );
 }
 
@@ -59,6 +60,7 @@ Future<String?> exportCode({
   required bool fix,
   required bool exportAsModule,
   String? branchName,
+  bool isCli = true,
 }) async {
   final endpointUrl = Uri.parse(endpoint);
   final client = http.Client();
@@ -71,6 +73,7 @@ Future<String?> exportCode({
       projectId: projectId,
       branchName: branchName,
       exportAsModule: exportAsModule,
+      isCli: isCli,
     );
     // Download actual code
     final projectZipBytes = base64Decode(result['project_zip']);
@@ -141,6 +144,7 @@ Future<dynamic> _callExport({
   required String projectId,
   String? branchName,
   required bool exportAsModule,
+  required bool isCli,
 }) async {
   final body = jsonEncode({
     'project': {
@@ -163,7 +167,7 @@ Future<dynamic> _callExport({
     stderr.write('Unexpected error from the server.\n');
     stderr.write('Status: ${response.statusCode}\n');
     stderr.write('Body: ${response.body}\n');
-    exit(1);
+    isCli ? exit(1) : throw 'Unexpected error from the server.';
   }
 
   final parsedResponse = jsonDecode(response.body);
@@ -175,7 +179,7 @@ Future<dynamic> _callExport({
     } else {
       stderr.write('Unexpected server error.\n');
     }
-    exit(1);
+    isCli ? exit(1) : throw 'Unexpected error from the server.';
   }
 
   return parsedResponse['value'];
