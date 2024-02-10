@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path_util;
 
 const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
-bool kIsCli = true;
 
 /// The `FlutterFlowApi` class provides methods for exporting code from a
 /// FlutterFlow project.
@@ -47,7 +46,6 @@ class FlutterFlowApi {
         unzipToParentFolder: unzipToParentFolder,
         fix: fix,
         exportAsModule: exportAsModule,
-        isCli: false,
       );
 }
 
@@ -61,9 +59,7 @@ Future<String?> exportCode({
   required bool fix,
   required bool exportAsModule,
   String? branchName,
-  bool isCli = true,
 }) async {
-  kIsCli = isCli;
   final endpointUrl = Uri.parse(endpoint);
   final client = http.Client();
   String? folderName;
@@ -164,15 +160,14 @@ Future<dynamic> _callExport({
   );
 
   if (response.statusCode == 429) {
-    _throwException(['Too many requests. Please try again later.\n']);
+    throw 'Too many requests. Please try again later.';
   }
 
   if (response.statusCode != 200) {
-    _throwException([
-      'Unexpected error from the server.\n',
-      'Status: ${response.statusCode}\n',
-      'Body: ${response.body}\n'
-    ]);
+    stderr.write('Unexpected error from the server.\n');
+    stderr.write('Status: ${response.statusCode}\n');
+    stderr.write('Body: ${response.body}\n');
+    throw ('Unexpected error from the server.');
   }
 
   final parsedResponse = jsonDecode(response.body);
@@ -180,9 +175,12 @@ Future<dynamic> _callExport({
   if (success == null || !success) {
     if (parsedResponse['reason'] != null &&
         parsedResponse['reason'].isNotEmpty) {
-      _throwException(['Error: ${parsedResponse['reason']}.\n']);
+      stderr.write('Error: ${parsedResponse['reason']}.\n');
+      throw 'Error: ${parsedResponse['reason']}.';
+    } else {
+      stderr.write('Unexpected server error.\n');
+      throw 'Unexpected server error.';
     }
-    _throwException(['Unexpected server error.\n']);
   }
 
   return parsedResponse['value'];
@@ -266,12 +264,4 @@ Future _runFix({
   } catch (e) {
     stderr.write('Error running "dart fix": $e\n');
   }
-}
-
-void _throwException(List<String> message) {
-  if (kIsCli) {
-    message.forEach(stderr.write);
-    exit(1);
-  }
-  throw message.first.trim();
 }
