@@ -159,11 +159,15 @@ Future<dynamic> _callExport({
     },
   );
 
+  if (response.statusCode == 429) {
+    throw 'Too many requests. Please try again later.';
+  }
+
   if (response.statusCode != 200) {
     stderr.write('Unexpected error from the server.\n');
     stderr.write('Status: ${response.statusCode}\n');
     stderr.write('Body: ${response.body}\n');
-    exit(1);
+    throw ('Unexpected error from the server.');
   }
 
   final parsedResponse = jsonDecode(response.body);
@@ -172,10 +176,11 @@ Future<dynamic> _callExport({
     if (parsedResponse['reason'] != null &&
         parsedResponse['reason'].isNotEmpty) {
       stderr.write('Error: ${parsedResponse['reason']}.\n');
+      throw 'Error: ${parsedResponse['reason']}.';
     } else {
       stderr.write('Unexpected server error.\n');
+      throw 'Unexpected server error.';
     }
-    exit(1);
   }
 
   return parsedResponse['value'];

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutterflow_cli/src/flutterflow_cli_base.dart';
+import 'package:flutterflow_cli/src/flutterflow_api_client.dart';
 
 const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
 
@@ -43,17 +43,21 @@ void main(List<String> args) async {
     endpoint = kDefaultEndpoint;
   }
 
-  await exportCode(
-    token: token,
-    endpoint: endpoint,
-    projectId: project,
-    destinationPath: parsedArguments.command!['dest'],
-    includeAssets: parsedArguments.command!['include-assets'],
-    branchName: parsedArguments.command!['branch-name'],
-    unzipToParentFolder: parsedArguments.command!['parent-folder'],
-    fix: parsedArguments.command!['fix'],
-    exportAsModule: parsedArguments.command!['as-module'],
-  );
+  try {
+    await exportCode(
+      token: token,
+      endpoint: endpoint,
+      projectId: project,
+      destinationPath: parsedArguments.command!['dest'],
+      includeAssets: parsedArguments.command!['include-assets'],
+      branchName: parsedArguments.command!['branch-name'],
+      unzipToParentFolder: parsedArguments.command!['parent-folder'],
+      fix: parsedArguments.command!['fix'],
+      exportAsModule: parsedArguments.command!['as-module'],
+    );
+  } catch (_) {
+    exit(1);
+  }
 }
 
 ArgResults _parseArgs(List<String> args) {
