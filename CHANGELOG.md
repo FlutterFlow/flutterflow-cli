@@ -1,3 +1,7 @@
+## 0.0.14
+
+- Update `FlutterFlowApi` to throw exceptions instead of calling `exit()`.
+
 ## 0.0.13
 
 - Add `--as-module` option.
