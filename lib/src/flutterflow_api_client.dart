@@ -150,8 +150,22 @@ Future<dynamic> _callExport({
     if (branchName != null) 'branch_name': branchName,
     'export_as_module': exportAsModule,
   });
+  return await _callEndpoint(
+    client: client,
+    token: token,
+    url: Uri.https(endpoint.host, '${endpoint.path}/exportCode'),
+    body: body,
+  );
+}
+
+Future<dynamic> _callEndpoint({
+  required final http.Client client,
+  required String token,
+  required Uri url,
+  required String body,
+}) async {
   final response = await client.post(
-    Uri.https(endpoint.host, '${endpoint.path}/exportCode'),
+    url,
     body: body,
     headers: {
       'Content-Type': 'application/json',
@@ -264,4 +278,73 @@ Future _runFix({
   } catch (e) {
     stderr.write('Error running "dart fix": $e\n');
   }
+}
+
+Future firebaseDeploy({
+  required String token,
+  required String projectId,
+  required String destinationPath,
+  String endpoint = kDefaultEndpoint,
+}) async {
+  final endpointUrl = Uri.parse(endpoint);
+  final body = jsonEncode({
+    'project': {
+      'path': 'projects/$projectId',
+    },
+    'token': token,
+  });
+  final result = await _callEndpoint(
+    client: http.Client(),
+    token: token,
+    url: Uri.https(
+        endpointUrl.host, '${endpointUrl.path}/exportFirebaseDeployCode'),
+    body: body,
+  );
+
+  // Download actual code
+  final projectZipBytes = base64Decode(result['firebase_zip']);
+  final firebaseProjectId = result['firebase_project_id'];
+  final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
+  extractArchiveToCurrentDirectory(projectFolder, destinationPath);
+  final firebaseDir = '$destinationPath/firebase';
+
+  // Install required modules for deployment.
+  await Process.run(
+    'npm',
+    ['install'],
+    workingDirectory: '$firebaseDir/functions',
+    runInShell: true,
+    stdoutEncoding: utf8,
+    stderrEncoding: utf8,
+  );
+  final directoriesResult = await Process.run(
+    'ls',
+    [],
+    workingDirectory: firebaseDir,
+    runInShell: true,
+    stdoutEncoding: utf8,
+    stderrEncoding: utf8,
+  );
+
+  // This directory only exists if there were custom cloud functions.
+  if (directoriesResult.stdout.contains('custom_cloud_functions')) {
+    await Process.run(
+      'npm',
+      ['install'],
+      workingDirectory: '$firebaseDir/custom_cloud_functions',
+      runInShell: true,
+      stdoutEncoding: utf8,
+      stderrEncoding: utf8,
+    );
+  }
+
+  final deployProcess = await Process.start(
+    'firebase',
+    ['deploy', '--project', firebaseProjectId],
+    workingDirectory: firebaseDir,
+    runInShell: true,
+  );
+  // There may be a need for the user to interactively provide inputs.
+  deployProcess.stdout.transform(utf8.decoder).forEach(print);
+  deployProcess.stdin.addStream(stdin);
 }
