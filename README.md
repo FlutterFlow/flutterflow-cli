@@ -34,6 +34,10 @@ API access is available only to users with active subscriptions. Visit https://a
 
 ## Deploy Firebase
 
+### Prerequisites
+
+ `npm` and `firebase-tools` must be installed in order to deploy to Firebase. You can follow the instructions at https://firebase.google.com/docs/cli#install_the_firebase_cli.
+
 ### Usage
 
 `flutterflow deploy-firebase --project <project id> --dest <output folder> --token <token>`
@@ -47,7 +51,6 @@ API access is available only to users with active subscriptions. Visit https://a
 | ----------- | ----------- | ----------- |
 | `--project`      | `-p`       | [Required or environment variable] Project ID. |
 | `--token`      | `-t`       | [Required or environment variable] API Token. |
-| `--dest`   | `-d`        | [Optional] Output folder. Defaults to the current directory if none is specified. |
 
 ## Issues
 

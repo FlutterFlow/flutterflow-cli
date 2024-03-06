@@ -283,7 +283,6 @@ Future _runFix({
 Future firebaseDeploy({
   required String token,
   required String projectId,
-  required String destinationPath,
   String endpoint = kDefaultEndpoint,
 }) async {
   final endpointUrl = Uri.parse(endpoint);
@@ -291,7 +290,6 @@ Future firebaseDeploy({
     'project': {
       'path': 'projects/$projectId',
     },
-    'token': token,
   });
   final result = await _callEndpoint(
     client: http.Client(),
@@ -304,47 +302,51 @@ Future firebaseDeploy({
   // Download actual code
   final projectZipBytes = base64Decode(result['firebase_zip']);
   final firebaseProjectId = result['firebase_project_id'];
+  final tmpFolder =
+      Directory.systemTemp.createTempSync('${projectId}_$firebaseProjectId');
   final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
-  extractArchiveToCurrentDirectory(projectFolder, destinationPath);
-  final firebaseDir = '$destinationPath/firebase';
+  extractArchiveToCurrentDirectory(projectFolder, tmpFolder.path);
+  final firebaseDir = '${tmpFolder.path}/firebase';
 
-  // Install required modules for deployment.
-  await Process.run(
-    'npm',
-    ['install'],
-    workingDirectory: '$firebaseDir/functions',
-    runInShell: true,
-    stdoutEncoding: utf8,
-    stderrEncoding: utf8,
-  );
-  final directoriesResult = await Process.run(
-    'ls',
-    [],
-    workingDirectory: firebaseDir,
-    runInShell: true,
-    stdoutEncoding: utf8,
-    stderrEncoding: utf8,
-  );
-
-  // This directory only exists if there were custom cloud functions.
-  if (directoriesResult.stdout.contains('custom_cloud_functions')) {
+  try {
+    // Install required modules for deployment.
     await Process.run(
       'npm',
       ['install'],
-      workingDirectory: '$firebaseDir/custom_cloud_functions',
+      workingDirectory: '$firebaseDir/functions',
       runInShell: true,
       stdoutEncoding: utf8,
       stderrEncoding: utf8,
     );
-  }
+    final directoriesResult = tmpFolder.listSync(recursive: true);
 
-  final deployProcess = await Process.start(
-    'firebase',
-    ['deploy', '--project', firebaseProjectId],
-    workingDirectory: firebaseDir,
-    runInShell: true,
-  );
-  // There may be a need for the user to interactively provide inputs.
-  deployProcess.stdout.transform(utf8.decoder).forEach(print);
-  deployProcess.stdin.addStream(stdin);
+    // This directory only exists if there were custom cloud functions.
+    if (directoriesResult.map((f) => f.path).any(
+        (path) => path.startsWith('$firebaseDir/custom_cloud_functions'))) {
+      await Process.run(
+        'npm',
+        ['install'],
+        workingDirectory: '$firebaseDir/custom_cloud_functions',
+        runInShell: true,
+        stdoutEncoding: utf8,
+        stderrEncoding: utf8,
+      );
+    }
+
+    final deployProcess = await Process.start(
+      'firebase',
+      ['deploy', '--project', firebaseProjectId],
+      workingDirectory: firebaseDir,
+      runInShell: true,
+    );
+    // There may be a need for the user to interactively provide inputs.
+    deployProcess.stdout.transform(utf8.decoder).forEach(print);
+    deployProcess.stdin.addStream(stdin);
+    final exitCode = await deployProcess.exitCode;
+    if (exitCode != 0) {
+      stderr.write('Failed to deploy to Firebase.\n');
+    }
+  } finally {
+    tmpFolder.deleteSync(recursive: true);
+  }
 }

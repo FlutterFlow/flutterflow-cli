@@ -58,11 +58,10 @@ void main(List<String> args) async {
           exportAsModule: parsedArguments.command!['as-module'],
         );
         break;
-      case 'firebase-deploy':
+      case 'deploy-firebase':
         await firebaseDeploy(
           token: token,
           projectId: project,
-          destinationPath: parsedArguments.command!['dest'],
           endpoint: endpoint,
         );
         break;
@@ -112,9 +111,7 @@ ArgResults _parseArgs(List<String> args) {
     );
 
   final firebaseDeployCommandParser = ArgParser()
-    ..addOption('project', abbr: 'p', help: 'Project id')
-    ..addOption('dest',
-        abbr: 'd', help: 'Destination directory', defaultsTo: '.');
+    ..addOption('project', abbr: 'p', help: 'Project id');
 
   final parser = ArgParser()
     ..addOption('endpoint', abbr: 'e', help: 'Endpoint', hide: true)
@@ -122,7 +119,7 @@ ArgResults _parseArgs(List<String> args) {
     ..addOption('token', abbr: 't', help: 'API Token')
     ..addFlag('help', negatable: false, abbr: 'h', help: 'Help')
     ..addCommand('export-code', exportCodeCommandParser)
-    ..addCommand('firebase-deploy', firebaseDeployCommandParser);
+    ..addCommand('deploy-firebase', firebaseDeployCommandParser);
 
   late ArgResults parsed;
   try {
