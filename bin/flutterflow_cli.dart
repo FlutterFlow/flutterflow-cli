@@ -14,7 +14,7 @@ void main(List<String> args) async {
   final project = parsedArguments.command!['project'] ??
       Platform.environment['FLUTTERFLOW_PROJECT'];
 
-  if (project == null) {
+  if (project == null || project.isEmpty) {
     stderr.write(
         'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n');
     exit(1);
@@ -43,16 +43,21 @@ void main(List<String> args) async {
     endpoint = Platform.environment['FLUTTERFLOW_ENDPOINT'] ?? kDefaultEndpoint;
   }
 
-  await exportCode(
-    token: token,
-    endpoint: endpoint,
-    projectId: project,
-    destinationPath: parsedArguments.command!['dest'],
-    includeAssets: parsedArguments.command!['include-assets'],
-    branchName: parsedArguments.command!['branch-name'],
-    unzipToParentFolder: parsedArguments.command!['parent-folder'],
-    fix: parsedArguments.command!['fix'],
-  );
+  try {
+    await exportCode(
+      token: token,
+      endpoint: endpoint,
+      projectId: project,
+      destinationPath: parsedArguments.command!['dest'],
+      includeAssets: parsedArguments.command!['include-assets'],
+      branchName: parsedArguments.command!['branch-name'],
+      unzipToParentFolder: parsedArguments.command!['parent-folder'],
+      fix: parsedArguments.command!['fix'],
+      exportAsModule: parsedArguments.command!['as-module'],
+    );
+  } catch (_) {
+    exit(1);
+  }
 }
 
 ArgResults _parseArgs(List<String> args) {
