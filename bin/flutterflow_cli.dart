@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutterflow_cli/src/flutterflow_cli_base.dart';
+import 'package:flutterflow_cli/src/flutterflow_api_client.dart';
 
 const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
 
@@ -85,6 +85,12 @@ ArgResults _parseArgs(List<String> args) {
           'download all project code directly into the specified directory, '
           'or the current directory if --dest is not set.',
       defaultsTo: true,
+    )
+    ..addFlag(
+      'as-module',
+      negatable: true,
+      help: 'Generate the project as a Flutter module.',
+      defaultsTo: false,
     );
 
   final parser = ArgParser()

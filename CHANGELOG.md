@@ -1,3 +1,16 @@
+## 0.0.14
+
+- Update `FlutterFlowApi` to throw exceptions instead of calling `exit()`.
+
+## 0.0.13
+
+- Add `--as-module` option.
+
+## 0.0.12
+
+- Fix `FLUTTERFLOW_PROJECT` environment variable issue.
+- Fix downloading assets when the parent directory does not exist.
+
 ## 0.0.11
 
 - Fix `--fix` `--no-parent-folder` edge case.

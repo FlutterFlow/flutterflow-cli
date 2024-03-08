@@ -12,7 +12,7 @@ API access is available only to users with active subscriptions. Visit https://a
 
 ## Usage
 
-`flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token> --[no-]fix --[no]-parent-folder`
+`flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token> --[no-]fix --[no-]parent-folder --[no-]as-module`
 
 * Instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
 * Instead of passing `--project` you can set `FLUTTERFLOW_PROJECT` environment variable.
@@ -28,6 +28,7 @@ API access is available only to users with active subscriptions. Visit https://a
 | `--branch-name`   | `-b`        | [Optional] Which branch to download. Defaults to `main`. |
 | `--[no-]fix`   | None        | [Optional] Whether to run `dart fix` on the downloaded code. Defaults to `false`. |
 | `--[no-]parent-folder`   | None        | [Optional] Whether to download code into a project-named sub-folder. If true, downloads all project files directly to the specified directory. Defaults to `true`. |
+| `--[no-]as-module`   | None        | [Optional] Whether to generate the project as a Flutter module |
 
 ## Issues
 
