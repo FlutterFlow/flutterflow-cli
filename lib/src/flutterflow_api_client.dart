@@ -283,13 +283,13 @@ Future _runFix({
 Future firebaseDeploy({
   required String token,
   required String projectId,
+  bool appendRules = false,
   String endpoint = kDefaultEndpoint,
 }) async {
   final endpointUrl = Uri.parse(endpoint);
   final body = jsonEncode({
-    'project': {
-      'path': 'projects/$projectId',
-    },
+    'project': {'path': 'projects/$projectId'},
+    'append_rules': appendRules,
   });
   final result = await _callEndpoint(
     client: http.Client(),
@@ -332,6 +332,27 @@ Future firebaseDeploy({
         stderrEncoding: utf8,
       );
     }
+
+    stdout.write('Initializing firebase...\n');
+    await Process.run(
+      'firebase',
+      ['use', firebaseProjectId],
+      workingDirectory: firebaseDir,
+      runInShell: true,
+    );
+    final initHostingProcess = await Process.start(
+      'firebase',
+      ['init', 'hosting'],
+      workingDirectory: firebaseDir,
+      runInShell: true,
+    );
+    final initHostingInputStream = Stream.periodic(
+      Duration(milliseconds: 100),
+      (count) => utf8.encode('\n'),
+    );
+    initHostingProcess.stdin.addStream(initHostingInputStream);
+    // Make sure hosting is initialized before deploying.
+    await initHostingProcess.exitCode;
 
     final deployProcess = await Process.start(
       'firebase',

@@ -62,6 +62,7 @@ void main(List<String> args) async {
         await firebaseDeploy(
           token: token,
           projectId: project,
+          appendRules: parsedArguments.command!['append-rules'],
           endpoint: endpoint,
         );
         break;
@@ -111,7 +112,13 @@ ArgResults _parseArgs(List<String> args) {
     );
 
   final firebaseDeployCommandParser = ArgParser()
-    ..addOption('project', abbr: 'p', help: 'Project id');
+    ..addOption('project', abbr: 'p', help: 'Project id')
+    ..addFlag(
+      'append-rules',
+      abbr: 'a',
+      help: 'Append to rules, instead of overwriting them.',
+      defaultsTo: false,
+    );
 
   final parser = ArgParser()
     ..addOption('endpoint', abbr: 'e', help: 'Endpoint', hide: true)
