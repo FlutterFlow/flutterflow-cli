@@ -40,7 +40,7 @@ void main(List<String> args) async {
     endpoint =
         "https://api-${parsedArguments['environment']}.flutterflow.io/v1";
   } else {
-    endpoint = kDefaultEndpoint;
+    endpoint = Platform.environment['FLUTTERFLOW_ENDPOINT'] ?? kDefaultEndpoint;
   }
 
   try {
