@@ -51,6 +51,7 @@ API access is available only to users with active subscriptions. Visit https://a
 | ----------- | ----------- | ----------- |
 | `--project`      | `-p`       | [Required or environment variable] Project ID. |
 | `--token`      | `-t`       | [Required or environment variable] API Token. |
+| `--append-rules`      | `-a`       | Whether to append to existing Firestore rules, instead of overwriting them. |
 
 ## Issues
 
