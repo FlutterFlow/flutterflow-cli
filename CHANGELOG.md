@@ -1,3 +1,7 @@
+## 0.0.15
+
+- Add environment variable for `FLUTTERFLOW_ENDPOINT`.
+
 ## 0.0.14
 
 - Update `FlutterFlowApi` to throw exceptions instead of calling `exit()`.
