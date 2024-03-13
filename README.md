@@ -40,7 +40,7 @@ API access is available only to users with active subscriptions. Visit https://a
 
 ### Usage
 
-`flutterflow deploy-firebase --project <project id> --dest <output folder> --token <token>`
+`flutterflow deploy-firebase --project <project id> --[no]-append-rules --token <token>`
 
 * Instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
 * Instead of passing `--project` you can set `FLUTTERFLOW_PROJECT` environment variable.

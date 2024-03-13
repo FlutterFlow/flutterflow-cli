@@ -302,13 +302,15 @@ Future firebaseDeploy({
   // Download actual code
   final projectZipBytes = base64Decode(result['firebase_zip']);
   final firebaseProjectId = result['firebase_project_id'];
-  final tmpFolder =
-      Directory.systemTemp.createTempSync('${projectId}_$firebaseProjectId');
   final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
-  extractArchiveToCurrentDirectory(projectFolder, tmpFolder.path);
-  final firebaseDir = '${tmpFolder.path}/firebase';
+  Directory? tmpFolder;
 
   try {
+    tmpFolder =
+        Directory.systemTemp.createTempSync('${projectId}_$firebaseProjectId');
+    extractArchiveToCurrentDirectory(projectFolder, tmpFolder.path);
+    final firebaseDir = '${tmpFolder.path}/firebase';
+
     // Install required modules for deployment.
     await Process.run(
       'npm',
@@ -318,11 +320,9 @@ Future firebaseDeploy({
       stdoutEncoding: utf8,
       stderrEncoding: utf8,
     );
-    final directoriesResult = tmpFolder.listSync(recursive: true);
 
     // This directory only exists if there were custom cloud functions.
-    if (directoriesResult.map((f) => f.path).any(
-        (path) => path.startsWith('$firebaseDir/custom_cloud_functions'))) {
+    if (Directory('$firebaseDir/custom_cloud_functions').existsSync()) {
       await Process.run(
         'npm',
         ['install'],
@@ -368,6 +368,6 @@ Future firebaseDeploy({
       stderr.write('Failed to deploy to Firebase.\n');
     }
   } finally {
-    tmpFolder.deleteSync(recursive: true);
+    tmpFolder?.deleteSync(recursive: true);
   }
 }
