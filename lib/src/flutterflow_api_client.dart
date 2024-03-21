@@ -148,7 +148,6 @@ Future<dynamic> _callExport({
     'project': {
       'path': 'projects/$projectId',
     },
-    'token': token,
     if (branchName != null) 'branch_name': branchName,
     'export_as_module': exportAsModule,
     'include_assets_map': includeAssets,
