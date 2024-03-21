@@ -71,6 +71,7 @@ Future<String?> exportCode({
       projectId: projectId,
       branchName: branchName,
       exportAsModule: exportAsModule,
+      includeAssets: includeAssets,
     );
     // Download actual code
     final projectZipBytes = base64Decode(result['project_zip']);
@@ -141,6 +142,7 @@ Future<dynamic> _callExport({
   required String projectId,
   String? branchName,
   required bool exportAsModule,
+  required bool includeAssets,
 }) async {
   final body = jsonEncode({
     'project': {
@@ -149,6 +151,7 @@ Future<dynamic> _callExport({
     'token': token,
     if (branchName != null) 'branch_name': branchName,
     'export_as_module': exportAsModule,
+    'include_assets_map': includeAssets,
   });
   final response = await client.post(
     Uri.https(endpoint.host, '${endpoint.path}/exportCode'),
