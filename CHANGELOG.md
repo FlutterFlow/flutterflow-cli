@@ -1,3 +1,6 @@
+## 0.0.16
+- Set `include_assets_map` based on `--[no-]include-assets` when calling the API.
+
 ## 0.0.15
 
 - Add environment variable for `FLUTTERFLOW_ENDPOINT`.
