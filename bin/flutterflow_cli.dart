@@ -44,17 +44,30 @@ void main(List<String> args) async {
   }
 
   try {
-    await exportCode(
-      token: token,
-      endpoint: endpoint,
-      projectId: project,
-      destinationPath: parsedArguments.command!['dest'],
-      includeAssets: parsedArguments.command!['include-assets'],
-      branchName: parsedArguments.command!['branch-name'],
-      unzipToParentFolder: parsedArguments.command!['parent-folder'],
-      fix: parsedArguments.command!['fix'],
-      exportAsModule: parsedArguments.command!['as-module'],
-    );
+    switch (parsedArguments.command?.name) {
+      case 'export-code':
+        await exportCode(
+          token: token,
+          endpoint: endpoint,
+          projectId: project,
+          destinationPath: parsedArguments.command!['dest'],
+          includeAssets: parsedArguments.command!['include-assets'],
+          branchName: parsedArguments.command!['branch-name'],
+          unzipToParentFolder: parsedArguments.command!['parent-folder'],
+          fix: parsedArguments.command!['fix'],
+          exportAsModule: parsedArguments.command!['as-module'],
+        );
+        break;
+      case 'deploy-firebase':
+        await firebaseDeploy(
+          token: token,
+          projectId: project,
+          appendRules: parsedArguments.command!['append-rules'],
+          endpoint: endpoint,
+        );
+        break;
+      default:
+    }
   } catch (_) {
     exit(1);
   }
@@ -98,12 +111,22 @@ ArgResults _parseArgs(List<String> args) {
       defaultsTo: false,
     );
 
+  final firebaseDeployCommandParser = ArgParser()
+    ..addOption('project', abbr: 'p', help: 'Project id')
+    ..addFlag(
+      'append-rules',
+      abbr: 'a',
+      help: 'Append to rules, instead of overwriting them.',
+      defaultsTo: false,
+    );
+
   final parser = ArgParser()
     ..addOption('endpoint', abbr: 'e', help: 'Endpoint', hide: true)
     ..addOption('environment', help: 'Environment', hide: true)
     ..addOption('token', abbr: 't', help: 'API Token')
     ..addFlag('help', negatable: false, abbr: 'h', help: 'Help')
-    ..addCommand('export-code', exportCodeCommandParser);
+    ..addCommand('export-code', exportCodeCommandParser)
+    ..addCommand('deploy-firebase', firebaseDeployCommandParser);
 
   late ArgResults parsed;
   try {
