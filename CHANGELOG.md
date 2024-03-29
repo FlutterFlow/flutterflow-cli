@@ -1,3 +1,7 @@
+## 0.0.17
+
+- Add `format` option to `FlutterFlowApi.exportCode()`.
+
 ## 0.0.16
 - Set `include_assets_map` based on `--[no-]include-assets` when calling the API.
 
