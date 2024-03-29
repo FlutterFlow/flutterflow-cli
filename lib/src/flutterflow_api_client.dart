@@ -22,6 +22,8 @@ class FlutterFlowApi {
   /// * [unzipToParentFolder] flag indicates whether to unzip the exported code
   /// to the parent folder.
   /// * [fix] flag indicates whether to fix any issues in the exported code.
+  /// * [exportAsModule] flag indicates whether to export the code as a module.
+  /// * [format] flag indicates whether to format the exported code.
   ///
   /// Returns a [Future] that completes with the path to the exported code, or
   /// throws an error if the export fails.
@@ -35,6 +37,7 @@ class FlutterFlowApi {
     bool unzipToParentFolder = false,
     bool fix = false,
     bool exportAsModule = false,
+    bool format = true,
   }) =>
       exportCode(
         token: token,
@@ -46,6 +49,7 @@ class FlutterFlowApi {
         unzipToParentFolder: unzipToParentFolder,
         fix: fix,
         exportAsModule: exportAsModule,
+        format: format,
       );
 }
 
@@ -58,6 +62,7 @@ Future<String?> exportCode({
   required bool unzipToParentFolder,
   required bool fix,
   required bool exportAsModule,
+  bool format = true,
   String? branchName,
 }) async {
   final endpointUrl = Uri.parse(endpoint);
@@ -72,6 +77,7 @@ Future<String?> exportCode({
       branchName: branchName,
       exportAsModule: exportAsModule,
       includeAssets: includeAssets,
+      format: format,
     );
     // Download actual code
     final projectZipBytes = base64Decode(result['project_zip']);
@@ -143,6 +149,7 @@ Future<dynamic> _callExport({
   String? branchName,
   required bool exportAsModule,
   required bool includeAssets,
+  required bool format,
 }) async {
   final body = jsonEncode({
     'project': {
@@ -151,6 +158,7 @@ Future<dynamic> _callExport({
     if (branchName != null) 'branch_name': branchName,
     'export_as_module': exportAsModule,
     'include_assets_map': includeAssets,
+    'format': format,
   });
   final response = await client.post(
     Uri.https(endpoint.host, '${endpoint.path}/exportCode'),
