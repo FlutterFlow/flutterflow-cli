@@ -10,14 +10,16 @@ API access is available only to users with active subscriptions. Visit https://a
 
 `dart pub global activate flutterflow_cli`
 
-## Usage
+## Export Code
+
+### Usage
 
 `flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token> --[no-]fix --[no-]parent-folder --[no-]as-module`
 
 * Instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
 * Instead of passing `--project` you can set `FLUTTERFLOW_PROJECT` environment variable.
 
-## Flags
+### Flags
 
 | Flag      | Abbreviation | Usage |
 | ----------- | ----------- | ----------- |
@@ -29,6 +31,27 @@ API access is available only to users with active subscriptions. Visit https://a
 | `--[no-]fix`   | None        | [Optional] Whether to run `dart fix` on the downloaded code. Defaults to `false`. |
 | `--[no-]parent-folder`   | None        | [Optional] Whether to download code into a project-named sub-folder. If true, downloads all project files directly to the specified directory. Defaults to `true`. |
 | `--[no-]as-module`   | None        | [Optional] Whether to generate the project as a Flutter module |
+
+## Deploy Firebase
+
+### Prerequisites
+
+ `npm` and `firebase-tools` must be installed in order to deploy to Firebase. You can follow the instructions at https://firebase.google.com/docs/cli#install_the_firebase_cli.
+
+### Usage
+
+`flutterflow deploy-firebase --project <project id> --[no]-append-rules --token <token>`
+
+* Instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
+* Instead of passing `--project` you can set `FLUTTERFLOW_PROJECT` environment variable.
+
+### Flags
+
+| Flag      | Abbreviation | Usage |
+| ----------- | ----------- | ----------- |
+| `--project`      | `-p`       | [Required or environment variable] Project ID. |
+| `--token`      | `-t`       | [Required or environment variable] API Token. |
+| `--append-rules`      | `-a`       | Whether to append to existing Firestore rules, instead of overwriting them. |
 
 ## Issues
 

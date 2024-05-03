@@ -160,8 +160,22 @@ Future<dynamic> _callExport({
     'include_assets_map': includeAssets,
     'format': format,
   });
+  return await _callEndpoint(
+    client: client,
+    token: token,
+    url: Uri.https(endpoint.host, '${endpoint.path}/exportCode'),
+    body: body,
+  );
+}
+
+Future<dynamic> _callEndpoint({
+  required final http.Client client,
+  required String token,
+  required Uri url,
+  required String body,
+}) async {
   final response = await client.post(
-    Uri.https(endpoint.host, '${endpoint.path}/exportCode'),
+    url,
     body: body,
     headers: {
       'Content-Type': 'application/json',
@@ -273,5 +287,97 @@ Future _runFix({
     }
   } catch (e) {
     stderr.write('Error running "dart fix": $e\n');
+  }
+}
+
+Future firebaseDeploy({
+  required String token,
+  required String projectId,
+  bool appendRules = false,
+  String endpoint = kDefaultEndpoint,
+}) async {
+  final endpointUrl = Uri.parse(endpoint);
+  final body = jsonEncode({
+    'project': {'path': 'projects/$projectId'},
+    'append_rules': appendRules,
+  });
+  final result = await _callEndpoint(
+    client: http.Client(),
+    token: token,
+    url: Uri.https(
+        endpointUrl.host, '${endpointUrl.path}/exportFirebaseDeployCode'),
+    body: body,
+  );
+
+  // Download actual code
+  final projectZipBytes = base64Decode(result['firebase_zip']);
+  final firebaseProjectId = result['firebase_project_id'];
+  final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
+  Directory? tmpFolder;
+
+  try {
+    tmpFolder =
+        Directory.systemTemp.createTempSync('${projectId}_$firebaseProjectId');
+    extractArchiveToCurrentDirectory(projectFolder, tmpFolder.path);
+    final firebaseDir = '${tmpFolder.path}/firebase';
+
+    // Install required modules for deployment.
+    await Process.run(
+      'npm',
+      ['install'],
+      workingDirectory: '$firebaseDir/functions',
+      runInShell: true,
+      stdoutEncoding: utf8,
+      stderrEncoding: utf8,
+    );
+
+    // This directory only exists if there were custom cloud functions.
+    if (Directory('$firebaseDir/custom_cloud_functions').existsSync()) {
+      await Process.run(
+        'npm',
+        ['install'],
+        workingDirectory: '$firebaseDir/custom_cloud_functions',
+        runInShell: true,
+        stdoutEncoding: utf8,
+        stderrEncoding: utf8,
+      );
+    }
+
+    stdout.write('Initializing firebase...\n');
+    await Process.run(
+      'firebase',
+      ['use', firebaseProjectId],
+      workingDirectory: firebaseDir,
+      runInShell: true,
+    );
+    final initHostingProcess = await Process.start(
+      'firebase',
+      ['init', 'hosting'],
+      workingDirectory: firebaseDir,
+      runInShell: true,
+    );
+    final initHostingInputStream = Stream.periodic(
+      Duration(milliseconds: 100),
+      (count) => utf8.encode('\n'),
+    );
+    initHostingProcess.stdin.addStream(initHostingInputStream);
+    // Make sure hosting is initialized before deploying.
+    await initHostingProcess.exitCode;
+
+    final deployProcess = await Process.start(
+      'firebase',
+      ['deploy', '--project', firebaseProjectId],
+      workingDirectory: firebaseDir,
+      runInShell: true,
+    );
+    // There may be a need for the user to interactively provide inputs.
+    deployProcess.stdout.transform(utf8.decoder).forEach(print);
+    deployProcess.stdin.addStream(stdin);
+    final exitCode = await deployProcess.exitCode;
+    if (exitCode != 0) {
+      stderr.write('Failed to deploy to Firebase.\n');
+    }
+  } finally {
+    tmpFolder?.deleteSync(recursive: true);
   }
 }
