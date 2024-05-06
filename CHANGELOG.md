@@ -1,3 +1,7 @@
+## 0.0.18
+
+- Add `deploy-firebase` command.
+
 ## 0.0.17
 
 - Add `format` option to `FlutterFlowApi.exportCode()`.
