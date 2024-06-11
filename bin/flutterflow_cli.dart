@@ -53,6 +53,7 @@ void main(List<String> args) async {
           destinationPath: parsedArguments.command!['dest'],
           includeAssets: parsedArguments.command!['include-assets'],
           branchName: parsedArguments.command!['branch-name'],
+          commitHash: parsedArguments.command!['commit-hash'],
           unzipToParentFolder: parsedArguments.command!['parent-folder'],
           fix: parsedArguments.command!['fix'],
           exportAsModule: parsedArguments.command!['as-module'],
@@ -76,10 +77,22 @@ void main(List<String> args) async {
 ArgResults _parseArgs(List<String> args) {
   final exportCodeCommandParser = ArgParser()
     ..addOption('project', abbr: 'p', help: 'Project id')
-    ..addOption('dest',
-        abbr: 'd', help: 'Destination directory', defaultsTo: '.')
-    ..addOption('branch-name',
-        abbr: 'b', help: '(Optional) Specify a branch name')
+    ..addOption(
+      'dest',
+      abbr: 'd',
+      help: 'Destination directory',
+      defaultsTo: '.',
+    )
+    ..addOption(
+      'branch-name',
+      abbr: 'b',
+      help: '(Optional) Specify a branch name',
+    )
+    ..addOption(
+      'commit-hash',
+      abbr: 'c',
+      help: '(Optional) Specify a commit hash',
+    )
     ..addFlag(
       'include-assets',
       negatable: true,
