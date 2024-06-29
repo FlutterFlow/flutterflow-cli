@@ -70,6 +70,9 @@ Future<String?> exportCode({
   String? branchName,
   bool exportAsDebug = false,
 }) async {
+  if (exportAsDebug && exportAsModule) {
+    throw 'Cannot export as module and debug at the same time.';
+  }
   final endpointUrl = Uri.parse(endpoint);
   final client = http.Client();
   String? folderName;
