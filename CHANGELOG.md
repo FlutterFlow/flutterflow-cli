@@ -1,3 +1,7 @@
+## 0.0.20
+
+- Add `--commit-hash` option.
+
 ## 0.0.19
 
 - Add `exportAsDebug` option to `FlutterFlowApi.exportCode()`.
