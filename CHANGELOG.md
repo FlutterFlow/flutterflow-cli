@@ -1,3 +1,7 @@
+## 0.0.19
+
+- Add `exportAsDebug` option to `FlutterFlowApi.exportCode()`.
+
 ## 0.0.18
 
 - Add `deploy-firebase` command.

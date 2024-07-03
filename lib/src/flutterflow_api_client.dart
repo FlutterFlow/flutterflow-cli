@@ -24,6 +24,8 @@ class FlutterFlowApi {
   /// * [fix] flag indicates whether to fix any issues in the exported code.
   /// * [exportAsModule] flag indicates whether to export the code as a module.
   /// * [format] flag indicates whether to format the exported code.
+  /// * [exportAsDebug] flag indicates whether to export the code as debug for
+  /// local run.
   ///
   /// Returns a [Future] that completes with the path to the exported code, or
   /// throws an error if the export fails.
@@ -39,6 +41,7 @@ class FlutterFlowApi {
     bool fix = false,
     bool exportAsModule = false,
     bool format = true,
+    bool exportAsDebug = false,
   }) =>
       exportCode(
         token: token,
@@ -52,6 +55,7 @@ class FlutterFlowApi {
         fix: fix,
         exportAsModule: exportAsModule,
         format: format,
+        exportAsDebug: exportAsDebug,
       );
 }
 
@@ -67,7 +71,11 @@ Future<String?> exportCode({
   bool format = true,
   String? branchName,
   String? commitHash,
+  bool exportAsDebug = false,
 }) async {
+  if (exportAsDebug && exportAsModule) {
+    throw 'Cannot export as module and debug at the same time.';
+  }
   final endpointUrl = Uri.parse(endpoint);
   final client = http.Client();
   String? folderName;
@@ -82,6 +90,7 @@ Future<String?> exportCode({
       exportAsModule: exportAsModule,
       includeAssets: includeAssets,
       format: format,
+      exportAsDebug: exportAsDebug,
     );
     // Download actual code
     final projectZipBytes = base64Decode(result['project_zip']);
@@ -155,6 +164,7 @@ Future<dynamic> _callExport({
   required bool exportAsModule,
   required bool includeAssets,
   required bool format,
+  required bool exportAsDebug,
 }) async {
   final body = jsonEncode({
     'project': {'path': 'projects/$projectId'},
@@ -163,6 +173,7 @@ Future<dynamic> _callExport({
     'export_as_module': exportAsModule,
     'include_assets_map': includeAssets,
     'format': format,
+    'export_as_debug': exportAsDebug,
   });
   return await _callEndpoint(
     client: client,
