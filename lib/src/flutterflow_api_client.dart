@@ -36,6 +36,7 @@ class FlutterFlowApi {
     required bool includeAssets,
     String endpoint = kDefaultEndpoint,
     String? branchName,
+    String? commitHash,
     bool unzipToParentFolder = false,
     bool fix = false,
     bool exportAsModule = false,
@@ -49,6 +50,7 @@ class FlutterFlowApi {
         destinationPath: destinationPath,
         includeAssets: includeAssets,
         branchName: branchName,
+        commitHash: commitHash,
         unzipToParentFolder: unzipToParentFolder,
         fix: fix,
         exportAsModule: exportAsModule,
@@ -68,6 +70,7 @@ Future<String?> exportCode({
   required bool exportAsModule,
   bool format = true,
   String? branchName,
+  String? commitHash,
   bool exportAsDebug = false,
 }) async {
   if (exportAsDebug && exportAsModule) {
@@ -83,6 +86,7 @@ Future<String?> exportCode({
       endpoint: endpointUrl,
       projectId: projectId,
       branchName: branchName,
+      commitHash: commitHash,
       exportAsModule: exportAsModule,
       includeAssets: includeAssets,
       format: format,
@@ -156,16 +160,16 @@ Future<dynamic> _callExport({
   required Uri endpoint,
   required String projectId,
   String? branchName,
+  String? commitHash,
   required bool exportAsModule,
   required bool includeAssets,
   required bool format,
   required bool exportAsDebug,
 }) async {
   final body = jsonEncode({
-    'project': {
-      'path': 'projects/$projectId',
-    },
+    'project': {'path': 'projects/$projectId'},
     if (branchName != null) 'branch_name': branchName,
+    if (commitHash != null) 'commit': {'path': 'commits/$commitHash'},
     'export_as_module': exportAsModule,
     'include_assets_map': includeAssets,
     'format': format,
