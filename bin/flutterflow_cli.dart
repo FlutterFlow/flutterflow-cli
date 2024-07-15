@@ -57,6 +57,7 @@ void main(List<String> args) async {
           unzipToParentFolder: parsedArguments.command!['parent-folder'],
           fix: parsedArguments.command!['fix'],
           exportAsModule: parsedArguments.command!['as-module'],
+          exportAsDebug: parsedArguments.command!['as-debug'],
         );
         break;
       case 'deploy-firebase':
@@ -121,6 +122,13 @@ ArgResults _parseArgs(List<String> args) {
       'as-module',
       negatable: true,
       help: 'Generate the project as a Flutter module.',
+      defaultsTo: false,
+    )
+    ..addFlag(
+      'as-debug',
+      negatable: true,
+      help: 'Generate the project with debug logging to be able to use'
+          'FlutterFlow Debug Panel inside the DevTools.',
       defaultsTo: false,
     );
 
