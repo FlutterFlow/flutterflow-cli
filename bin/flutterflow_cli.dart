@@ -127,7 +127,7 @@ ArgResults _parseArgs(List<String> args) {
     ..addFlag(
       'as-debug',
       negatable: true,
-      help: 'Generate the project with debug logging to be able to use'
+      help: 'Generate the project with debug logging to be able to use '
           'FlutterFlow Debug Panel inside the DevTools.',
       defaultsTo: false,
     );
