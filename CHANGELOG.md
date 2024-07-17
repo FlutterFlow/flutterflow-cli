@@ -1,3 +1,7 @@
+## 0.0.21
+
+- Add `--as-debug` option.
+
 ## 0.0.20
 
 - Add `--commit-hash` option.
