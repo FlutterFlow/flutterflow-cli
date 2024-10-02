@@ -134,7 +134,6 @@ ArgResults _parseArgs(List<String> args) {
     )
     ..addOption(
       'environment-name',
-      abbr: 'b',
       help: '(Optional) Specify a environment name.',
       defaultsTo: 'Production',
     );
