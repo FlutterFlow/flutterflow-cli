@@ -26,6 +26,7 @@ class FlutterFlowApi {
   /// * [format] flag indicates whether to format the exported code.
   /// * [exportAsDebug] flag indicates whether to export the code as debug for
   /// local run.
+  /// * [environmentName] is the name of the environment to export the code for.
   ///
   /// Returns a [Future] that completes with the path to the exported code, or
   /// throws an error if the export fails.
@@ -36,6 +37,7 @@ class FlutterFlowApi {
     required bool includeAssets,
     String endpoint = kDefaultEndpoint,
     String? branchName,
+    String? environmentName,
     String? commitHash,
     bool unzipToParentFolder = false,
     bool fix = false,
@@ -70,6 +72,7 @@ Future<String?> exportCode({
   required bool exportAsModule,
   bool format = true,
   String? branchName,
+  String? environmentName,
   String? commitHash,
   bool exportAsDebug = false,
 }) async {
@@ -86,6 +89,7 @@ Future<String?> exportCode({
       endpoint: endpointUrl,
       projectId: projectId,
       branchName: branchName,
+      environmentName: environmentName,
       commitHash: commitHash,
       exportAsModule: exportAsModule,
       includeAssets: includeAssets,
@@ -160,6 +164,7 @@ Future<dynamic> _callExport({
   required Uri endpoint,
   required String projectId,
   String? branchName,
+  String? environmentName,
   String? commitHash,
   required bool exportAsModule,
   required bool includeAssets,
@@ -169,6 +174,7 @@ Future<dynamic> _callExport({
   final body = jsonEncode({
     'project': {'path': 'projects/$projectId'},
     if (branchName != null) 'branch_name': branchName,
+    if (environmentName != null) 'environment_name': environmentName,
     if (commitHash != null) 'commit': {'path': 'commits/$commitHash'},
     'export_as_module': exportAsModule,
     'include_assets_map': includeAssets,

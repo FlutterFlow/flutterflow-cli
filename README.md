@@ -32,7 +32,7 @@ API access is available only to users with active subscriptions. Visit https://a
 | `--[no-]parent-folder`   | None        | [Optional] Whether to download code into a project-named sub-folder. If true, downloads all project files directly to the specified directory. Defaults to `true`. |
 | `--[no-]as-module`   | None        | [Optional] Whether to generate the project as a Flutter module. Defaults to `false`. |
 | `--[no-]as-debug`   | None        | [Optional] Whether to generate the project with debug logging to be able to use FlutterFlow Debug Panel inside the DevTools. Defaults to `false`. |
-
+| `--environment-name`   | None        | [Optional] Which project environment to be used. Defaults to `Production`. |
 ## Deploy Firebase
 
 ### Prerequisites
