@@ -1,6 +1,6 @@
 ## 0.0.22
 
-- Add `--environment-name` option.
+- Add `--project-environment` option.
 
 ## 0.0.21
 

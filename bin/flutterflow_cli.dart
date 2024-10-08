@@ -133,9 +133,8 @@ ArgResults _parseArgs(List<String> args) {
       defaultsTo: false,
     )
     ..addOption(
-      'environment-name',
-      help: '(Optional) Specify a environment name.',
-      defaultsTo: 'Production',
+      'project-environment',
+      help: '(Optional) Specify a project environment name.',
     );
 
   final firebaseDeployCommandParser = ArgParser()
