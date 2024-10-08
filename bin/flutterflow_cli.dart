@@ -58,6 +58,7 @@ void main(List<String> args) async {
           fix: parsedArguments.command!['fix'],
           exportAsModule: parsedArguments.command!['as-module'],
           exportAsDebug: parsedArguments.command!['as-debug'],
+          environmentName: parsedArguments.command!['project-environment'],
         );
         break;
       case 'deploy-firebase':
@@ -130,6 +131,10 @@ ArgResults _parseArgs(List<String> args) {
       help: 'Generate the project with debug logging to be able to use '
           'FlutterFlow Debug Panel inside the DevTools.',
       defaultsTo: false,
+    )
+    ..addOption(
+      'project-environment',
+      help: '(Optional) Specify a project environment name.',
     );
 
   final firebaseDeployCommandParser = ArgParser()

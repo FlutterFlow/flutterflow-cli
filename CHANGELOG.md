@@ -1,3 +1,7 @@
+## 0.0.22
+
+- Add `--project-environment` option.
+
 ## 0.0.21
 
 - Add `--as-debug` option.
