@@ -100,11 +100,7 @@ Future<String?> exportCode({
     final projectZipBytes = base64Decode(result['project_zip']);
     final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
 
-    if (unzipToParentFolder) {
-      extractArchiveToDisk(projectFolder, destinationPath);
-    } else {
-      extractArchiveToCurrentDirectory(projectFolder, destinationPath);
-    }
+    extractArchiveTo(projectFolder, destinationPath, unzipToParentFolder);
 
     folderName = projectFolder.first.name;
 
@@ -135,21 +131,19 @@ Future<String?> exportCode({
 
 // Extract files to the specified directory without a project-named
 // parent folder.
-void extractArchiveToCurrentDirectory(
-  Archive projectFolder,
-  String destinationPath,
-) {
+void extractArchiveTo(
+    Archive projectFolder, String destinationPath, bool unzipToParentFolder) {
   for (final file in projectFolder.files) {
     if (file.isFile) {
       final data = file.content as List<int>;
       final filename = file.name;
 
-      // Remove the `<project>` prefix from paths.
+      // Remove the `<project>` prefix from paths if needed.
       final path = path_util.join(
           destinationPath,
-          path_util.joinAll(
-            path_util.split(filename).sublist(1),
-          ));
+          unzipToParentFolder
+              ? filename
+              : path_util.joinAll(path_util.split(filename).sublist(1)));
 
       final fileOut = File(path);
       fileOut.createSync(recursive: true);
@@ -339,7 +333,7 @@ Future firebaseDeploy({
   try {
     tmpFolder =
         Directory.systemTemp.createTempSync('${projectId}_$firebaseProjectId');
-    extractArchiveToCurrentDirectory(projectFolder, tmpFolder.path);
+    extractArchiveTo(projectFolder, tmpFolder.path, false);
     final firebaseDir = '${tmpFolder.path}/firebase';
 
     // Install required modules for deployment.
