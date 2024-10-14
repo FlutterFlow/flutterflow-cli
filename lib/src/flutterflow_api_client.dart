@@ -5,6 +5,8 @@ import 'package:archive/archive_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path_util;
 
+import 'flutterflow_ignore.dart';
+
 const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
 
 /// The `FlutterFlowApi` class provides methods for exporting code from a
@@ -133,21 +135,26 @@ Future<String?> exportCode({
 // parent folder.
 void extractArchiveTo(
     Archive projectFolder, String destinationPath, bool unzipToParentFolder) {
+  final ignore = FlutterFlowIgnore(path: destinationPath);
+
   for (final file in projectFolder.files) {
     if (file.isFile) {
-      final data = file.content as List<int>;
-      final filename = file.name;
+      final relativeFilename =
+          path_util.joinAll(path_util.split(file.name).sublist(1));
+
+      // Found on .flutterflowignore, move on.
+      if (ignore.matches(unzipToParentFolder ? file.name : relativeFilename)) {
+        stderr.write('Ignoring $relativeFilename, file remained unchanged.\n');
+        continue;
+      }
 
       // Remove the `<project>` prefix from paths if needed.
       final path = path_util.join(
-          destinationPath,
-          unzipToParentFolder
-              ? filename
-              : path_util.joinAll(path_util.split(filename).sublist(1)));
+          destinationPath, unzipToParentFolder ? file.name : relativeFilename);
 
       final fileOut = File(path);
       fileOut.createSync(recursive: true);
-      fileOut.writeAsBytesSync(data);
+      fileOut.writeAsBytesSync(file.content as List<int>);
     }
   }
 }
