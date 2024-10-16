@@ -31,7 +31,7 @@ jobs:
         run: |
           dart format . --set-exit-if-changed
 
-  build:
+  build_and_test:
     runs-on: ${{ matrix.os }}
     needs: check
     timeout-minutes: 10
@@ -60,3 +60,7 @@ jobs:
       - name: Run
         run: |
           dart run bin/flutterflow_cli.dart -h
+
+      - name: Test
+        run: |
+          dart test
