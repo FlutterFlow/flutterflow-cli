@@ -76,6 +76,10 @@ Future<String?> exportCode({
   String? commitHash,
   bool exportAsDebug = false,
 }) async {
+  stdout.write('Downloading code with the FlutterFlow CLI...\n');
+  stdout.write('You are exporting project $projectId.\n');
+  stdout.write(
+      '${branchName != null ? 'Branch: $branchName ' : ''}${environmentName != null ? 'Environment: $environmentName ' : ''}${commitHash != null ? 'Commit: $commitHash' : ''}\n');
   if (exportAsDebug && exportAsModule) {
     throw 'Cannot export as module and debug at the same time.';
   }
@@ -106,6 +110,8 @@ Future<String?> exportCode({
       extractArchiveToCurrentDirectory(projectFolder, destinationPath);
     }
 
+    stdout.write('Successfully downloaded the code!\n');
+
     folderName = projectFolder.first.name;
 
     final postCodeGenerationFutures = <Future>[
@@ -130,6 +136,7 @@ Future<String?> exportCode({
   } finally {
     client.close();
   }
+  stdout.write('All done!\n');
   return folderName;
 }
 
@@ -261,6 +268,7 @@ Future _downloadAssets({
       stderr.write('Error downloading asset $path. This is probably fine.\n');
     }
   });
+  stdout.write('Downloading assets...\n');
   await Future.wait(futures);
 }
 
@@ -279,7 +287,7 @@ Future _runFix({
     final workingDirectory = unzipToParentFolder
         ? path_util.join(destinationPath, directory)
         : destinationPath;
-
+    stdout.write('Running flutter pub get...\n');
     final pubGetResult = await Process.run(
       'flutter',
       ['pub', 'get'],
@@ -293,6 +301,7 @@ Future _runFix({
           '"flutter pub get" failed with code ${pubGetResult.exitCode}, stderr:\n${pubGetResult.stderr}\n');
       return;
     }
+    stdout.write('Running dart fix...\n');
     final fixDirectory = unzipToParentFolder ? directory : '';
     final dartFixResult = await Process.run(
       'dart',
