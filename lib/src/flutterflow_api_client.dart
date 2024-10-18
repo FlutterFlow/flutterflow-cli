@@ -110,7 +110,8 @@ Future<String?> exportCode({
       extractArchiveToCurrentDirectory(projectFolder, destinationPath);
     }
 
-    folderName = projectFolder.first.name;
+    var fileName = projectFolder.first.name;
+    folderName = fileName.substring(0, fileName.indexOf('/'));
 
     final postCodeGenerationFutures = <Future>[
       if (fix)
