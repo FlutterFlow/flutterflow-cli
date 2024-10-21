@@ -111,7 +111,7 @@ Future<String?> exportCode({
     }
 
     var fileName = projectFolder.first.name;
-    folderName = fileName.substring(0, fileName.indexOf('/'));
+    folderName = fileName.substring(0, fileName.indexOf(Platform.pathSeparator));
 
     final postCodeGenerationFutures = <Future>[
       if (fix)
