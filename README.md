@@ -19,6 +19,9 @@ API access is available only to users with active subscriptions. Visit https://a
 * Instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
 * Instead of passing `--project` you can set `FLUTTERFLOW_PROJECT` environment variable.
 
+In case you are updating an existing project and you don't want existing files to be changed, you can create a `.flutterflowignore` file at the root of the output folder
+with a list of files to be ignored using [globbing syntax](https://pub.dev/packages/glob#syntax).
+
 ### Flags
 
 | Flag      | Abbreviation | Usage |

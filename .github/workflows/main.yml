@@ -1,0 +1,66 @@
+name: FlutterFlow
+on: push
+
+env:
+  # Keep this in sync with the version used by FlutterFlow.
+  DART_VERSION: 3.4.3
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ env.DART_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          dart pub get
+
+      - name: Analyze code
+        run: |
+          dart analyze
+
+      - name: Format code
+        run: |
+          dart format . --set-exit-if-changed
+
+  build_and_test:
+    runs-on: ${{ matrix.os }}
+    needs: check
+    timeout-minutes: 10
+
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, windows-2022, macos-14]
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ env.DART_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          dart pub get
+
+      - name: Build
+        run: |
+          dart compile exe bin/flutterflow_cli.dart
+
+      - name: Run
+        run: |
+          dart run bin/flutterflow_cli.dart -h
+
+      - name: Test
+        run: |
+          dart test
