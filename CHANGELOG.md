@@ -1,3 +1,7 @@
+## 0.0.23
+
+- Add more logging.
+
 ## 0.0.22
 
 - Add `--project-environment` option.
