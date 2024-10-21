@@ -1,0 +1,14 @@
+file
+dir/*
+dir_recursive/**/file
+dir_recursive_implicit/
+this/file/exactly
+this/directory/
+
+#comment
+  #another_comment
+
+  LEADING_SPACES.md
+TRAILING_SPACES.md  
+  LEADING_AND_TRAILING_SPACES.md  
+
