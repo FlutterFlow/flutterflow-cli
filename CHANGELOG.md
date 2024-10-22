@@ -1,3 +1,6 @@
+## 0.0.24
+
+- Fix an issue on Windows
 ## 0.0.23
 
 - Add more logging.

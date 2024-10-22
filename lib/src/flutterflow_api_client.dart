@@ -108,10 +108,6 @@ Future<String?> exportCode({
 
     extractArchiveTo(projectFolder, destinationPath, unzipToParentFolder);
 
-    var fileName = projectFolder.first.name;
-    folderName =
-        fileName.substring(0, fileName.indexOf(Platform.pathSeparator));
-
     final postCodeGenerationFutures = <Future>[
       if (fix)
         _runFix(
@@ -131,6 +127,9 @@ Future<String?> exportCode({
     if (postCodeGenerationFutures.isNotEmpty) {
       await Future.wait(postCodeGenerationFutures);
     }
+
+    var fileName = projectFolder.first.name;
+    folderName = fileName.substring(0, fileName.indexOf('/'));
   } finally {
     client.close();
   }
