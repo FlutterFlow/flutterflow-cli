@@ -1,6 +1,7 @@
 ## 0.0.24
 
-- Fix an issue on Windows
+- Fix an issue on Windows.
+- Add support for `.flutterflowignore`.
 ## 0.0.23
 
 - Add more logging.
