@@ -1,3 +1,7 @@
+## 0.0.25
+
+- Update URL parsing to support more types of endpoints.
+
 ## 0.0.24
 
 - Fix an issue on Windows.
