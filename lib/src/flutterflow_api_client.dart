@@ -191,7 +191,7 @@ Future<dynamic> _callExport({
   return await _callEndpoint(
     client: client,
     token: token,
-    url: Uri.https(endpoint.host, '${endpoint.path}/exportCode'),
+    url: Uri.parse('$endpoint/exportCode'),
     body: body,
   );
 }
