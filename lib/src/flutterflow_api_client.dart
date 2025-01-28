@@ -76,6 +76,7 @@ Future<String?> exportCode({
   String? branchName,
   String? environmentName,
   String? commitHash,
+  String? snapshotId,
   bool exportAsDebug = false,
 }) async {
   stderr.write('Downloading code with the FlutterFlow CLI...\n');
@@ -97,6 +98,7 @@ Future<String?> exportCode({
       branchName: branchName,
       environmentName: environmentName,
       commitHash: commitHash,
+      snapshotId: snapshotId,
       exportAsModule: exportAsModule,
       includeAssets: includeAssets,
       format: format,
@@ -173,6 +175,7 @@ Future<dynamic> _callExport({
   String? branchName,
   String? environmentName,
   String? commitHash,
+  String? snapshotId,
   required bool exportAsModule,
   required bool includeAssets,
   required bool format,
@@ -187,6 +190,7 @@ Future<dynamic> _callExport({
     'include_assets_map': includeAssets,
     'format': format,
     'export_as_debug': exportAsDebug,
+    'snapshot_id': snapshotId,
   });
   return await _callEndpoint(
     client: client,

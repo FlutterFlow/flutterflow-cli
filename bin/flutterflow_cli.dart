@@ -59,6 +59,7 @@ void main(List<String> args) async {
           exportAsModule: parsedArguments.command!['as-module'],
           exportAsDebug: parsedArguments.command!['as-debug'],
           environmentName: parsedArguments.command!['project-environment'],
+          snapshotId: parsedArguments.command!['snapshot-id'],
         );
         break;
       case 'deploy-firebase':
