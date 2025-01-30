@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          dart pub get
+          dart pub get --enforce-lockfile
 
       - name: Analyze code
         run: |
@@ -51,7 +51,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          dart pub get
+          dart pub get --enforce-lockfile
 
       - name: Build
         run: |
