@@ -3,7 +3,8 @@ on: push
 
 env:
   # Keep this in sync with the version used by FlutterFlow.
-  DART_VERSION: 3.4.3
+  DART_VERSION: 3.5.2
+  FLUTTER_VERSION: 3.24.2
 
 jobs:
   check:
@@ -38,16 +39,18 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-24.04, windows-2022, macos-14]
+        os: [ubuntu-24.04, windows-2025, windows-2022, macos-14]
 
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
 
-      - name: Setup Dart
-        uses: dart-lang/setup-dart@v1
+      - name: Setup Flutter
+        uses: subosito/flutter-action@44ac965b96f18d999802d4b807e3256d5a3f9fa1 # v2
         with:
-          sdk: ${{ env.DART_VERSION }}
+          channel: master
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
 
       - name: Install dependencies
         run: |
@@ -62,5 +65,7 @@ jobs:
           dart run bin/flutterflow_cli.dart -h
 
       - name: Test
+        env:
+          FF_TESTER_TOKEN: ${{ secrets.FF_TESTER_TOKEN }}
         run: |
           dart test
