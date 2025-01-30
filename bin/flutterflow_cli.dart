@@ -5,7 +5,7 @@ import 'package:flutterflow_cli/src/flutterflow_api_client.dart';
 
 const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
 
-void main(List<String> args) async {
+Future<void> appMain(List<String> args) async {
   final parsedArguments = _parseArgs(args);
 
   final token =
@@ -180,4 +180,8 @@ ArgResults _parseArgs(List<String> args) {
   }
 
   return parsed;
+}
+
+void main(List<String> args) async {
+  await appMain(args);
 }
