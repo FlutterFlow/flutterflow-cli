@@ -38,6 +38,8 @@ jobs:
     timeout-minutes: 10
 
     strategy:
+      # Can't run in parallel otherwise we get rate limted
+      max-parallel: 1
       matrix:
         os: [ubuntu-24.04, windows-2025, windows-2022, macos-14]
 
