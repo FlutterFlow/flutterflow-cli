@@ -1,3 +1,7 @@
+## 0.0.26
+
+- Update dependency versions.
+
 ## 0.0.25
 
 - Update URL parsing to support more types of endpoints.
