@@ -35,7 +35,7 @@ jobs:
   build_and_test:
     runs-on: ${{ matrix.os }}
     needs: check
-    timeout-minutes: 10
+    timeout-minutes: 30
 
     strategy:
       # Can't run in parallel otherwise we get rate limted
