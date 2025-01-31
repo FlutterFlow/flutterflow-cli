@@ -71,7 +71,8 @@ Future<void> appMain(List<String> args) async {
         break;
       default:
     }
-  } catch (_) {
+  } catch (e) {
+    stderr.write('Error running the application: $e\n');
     exit(1);
   }
 }
