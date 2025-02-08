@@ -58,6 +58,8 @@ Future<void> appMain(List<String> args) async {
           fix: parsedArguments.command!['fix'],
           exportAsModule: parsedArguments.command!['as-module'],
           exportAsDebug: parsedArguments.command!['as-debug'],
+          usePackageAssetPaths:
+              parsedArguments.command!['use-package-asset-paths'],
           environmentName: parsedArguments.command!['project-environment'],
         );
         break;
@@ -131,6 +133,12 @@ ArgResults _parseArgs(List<String> args) {
       negatable: true,
       help: 'Generate the project with debug logging to be able to use '
           'FlutterFlow Debug Panel inside the DevTools.',
+      defaultsTo: false,
+    )
+    ..addFlag(
+      'use-package-asset-paths',
+      negatable: true,
+      help: 'Use package asset paths in the generated code.',
       defaultsTo: false,
     )
     ..addOption(

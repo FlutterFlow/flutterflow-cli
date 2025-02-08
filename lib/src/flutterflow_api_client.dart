@@ -29,6 +29,7 @@ class FlutterFlowApi {
   /// * [exportAsDebug] flag indicates whether to export the code as debug for
   /// local run.
   /// * [environmentName] is the name of the environment to export the code for.
+  /// * [usePackageAssetPaths] flag indicates whether to use package asset paths.
   ///
   /// Returns a [Future] that completes with the path to the exported code, or
   /// throws an error if the export fails.
@@ -46,6 +47,7 @@ class FlutterFlowApi {
     bool exportAsModule = false,
     bool format = true,
     bool exportAsDebug = false,
+    bool usePackageAssetPaths = false,
   }) =>
       exportCode(
         token: token,
@@ -60,6 +62,7 @@ class FlutterFlowApi {
         exportAsModule: exportAsModule,
         format: format,
         exportAsDebug: exportAsDebug,
+        usePackageAssetPaths: usePackageAssetPaths,
       );
 }
 
@@ -77,6 +80,7 @@ Future<String?> exportCode({
   String? environmentName,
   String? commitHash,
   bool exportAsDebug = false,
+  bool usePackageAssetPaths = false,
 }) async {
   stderr.write('Downloading code with the FlutterFlow CLI...\n');
   stderr.write('You are exporting project $projectId.\n');
@@ -101,6 +105,7 @@ Future<String?> exportCode({
       includeAssets: includeAssets,
       format: format,
       exportAsDebug: exportAsDebug,
+      usePackageAssetPaths: usePackageAssetPaths,
     );
     // Download actual code
     final projectZipBytes = base64Decode(result['project_zip']);
@@ -177,6 +182,7 @@ Future<dynamic> _callExport({
   required bool includeAssets,
   required bool format,
   required bool exportAsDebug,
+  required bool usePackageAssetPaths,
 }) async {
   final body = jsonEncode({
     'project': {'path': 'projects/$projectId'},
@@ -187,6 +193,7 @@ Future<dynamic> _callExport({
     'include_assets_map': includeAssets,
     'format': format,
     'export_as_debug': exportAsDebug,
+    'use_package_asset_paths': usePackageAssetPaths,
   });
   return await _callEndpoint(
     client: client,

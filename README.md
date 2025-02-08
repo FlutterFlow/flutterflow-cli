@@ -14,7 +14,7 @@ API access is available only to users with active subscriptions. Visit https://a
 
 ### Usage
 
-`flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token> --[no-]fix --[no-]parent-folder --[no-]as-module --[no-]as-debug`
+`flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token> --[no-]fix --[no-]parent-folder --[no-]as-module --[no-]as-debug --[no-]use-package-asset-paths`
 
 * Instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
 * Instead of passing `--project` you can set `FLUTTERFLOW_PROJECT` environment variable.
@@ -35,6 +35,7 @@ with a list of files to be ignored using [globbing syntax](https://pub.dev/packa
 | `--[no-]parent-folder`   | None        | [Optional] Whether to download code into a project-named sub-folder. If true, downloads all project files directly to the specified directory. Defaults to `true`. |
 | `--[no-]as-module`   | None        | [Optional] Whether to generate the project as a Flutter module. Defaults to `false`. |
 | `--[no-]as-debug`   | None        | [Optional] Whether to generate the project with debug logging to be able to use FlutterFlow Debug Panel inside the DevTools. Defaults to `false`. |
+| `--[no-]use-package-asset-paths`   | None        | [Optional] Whether to use package asset paths in the generated code. If enabled, all asset paths will be prepended with 'package/$projectName', making them correctly referenceable when importing this Flutter project as a package. Defaults to `false`. |
 | `--project-environment`   | None        | [Optional] Which project environment to be used. If empty, the current environment in the project will be used.|
 ## Deploy Firebase
 
