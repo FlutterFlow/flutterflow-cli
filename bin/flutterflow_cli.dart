@@ -2,57 +2,24 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:flutterflow_cli/flutterflow_cli.dart';
-import 'package:flutterflow_cli/src/flutterflow_api_client.dart';
-import '';
 
 const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
 
 Future<void> appMain(List<String> args) async {
   final parsedArguments = _parseArgs(args);
+  late Map<String,String> projectInfo;
 
-  final token =
-      parsedArguments['token'] ?? Platform.environment['FLUTTERFLOW_API_TOKEN'];
-
-  final project = 'a';
-  // parsedArguments.command!['project'] ??
-  //     Platform.environment['FLUTTERFLOW_PROJECT'];
-
-  // if (project == null || project.isEmpty) {
-  //   stderr.write(
-  //       'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n');
-  //   exit(1);
-  // }
-
-  // if (parsedArguments['endpoint'] != null &&
-  //     parsedArguments['environment'] != null) {
-  //   stderr.write(
-  //       'Only one of --endpoint and --environment options can be set.\n');
-  //   exit(1);
-  // }
-
-  // if (token?.isEmpty ?? true) {
-  //   stderr.write(
-  //       'Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.\n');
-  //   exit(1);
-  // }
-
-  late String endpoint = '';
-  // if (parsedArguments['endpoint'] != null) {
-  //   endpoint = parsedArguments['endpoint'];
-  // } else if (parsedArguments['environment'] != null) {
-  //   endpoint =
-  //       "https://api-${parsedArguments['environment']}.flutterflow.io/v1";
-  // } else {
-  //   endpoint = Platform.environment['FLUTTERFLOW_ENDPOINT'] ?? kDefaultEndpoint;
-  // }
+  if (parsedArguments.command?.name != 'cleanup-files') {
+    projectInfo=getProjectInfo(parsedArguments);
+  }
 
   try {
     switch (parsedArguments.command?.name) {
       case 'export-code':
         await exportCode(
-          token: token,
-          endpoint: endpoint,
-          projectId: project,
+          token: projectInfo['token']!,
+          endpoint: projectInfo['endpoint']!,
+          projectId: projectInfo['project']!,
           destinationPath: parsedArguments.command!['dest'],
           includeAssets: parsedArguments.command!['include-assets'],
           branchName: parsedArguments.command!['branch-name'],
@@ -66,10 +33,10 @@ Future<void> appMain(List<String> args) async {
         break;
       case 'deploy-firebase':
         await firebaseDeploy(
-          token: token,
-          projectId: project,
+          token: projectInfo['token']!,
+          endpoint: projectInfo['endpoint']!,
+          projectId: projectInfo['project']!,
           appendRules: parsedArguments.command!['append-rules'],
-          endpoint: endpoint,
         );
         break;
       case 'cleanup-files':
@@ -156,10 +123,10 @@ ArgResults _parseArgs(List<String> args) {
     );
 
   final cleanupFilesCommandParser = ArgParser()
-    ..addOption('path', help: 'Project path',defaultsTo: '')
+    ..addOption('path', help: 'Project path', defaultsTo: '')
     ..addFlag('auto-delete',
         abbr: 'd',
-        help: 'Automatic delete files',
+        help: 'Automatically delete unused files',
         negatable: true,
         defaultsTo: false);
 
@@ -198,6 +165,34 @@ ArgResults _parseArgs(List<String> args) {
   }
 
   return parsed;
+}
+
+/// Retrieves API Token, Project ID, and Endpoint
+Map<String, String> getProjectInfo(ArgResults parsedArguments) {
+  final token = parsedArguments['token'] ?? Platform.environment['FLUTTERFLOW_API_TOKEN'];
+  final project = parsedArguments.command?['project'] ?? Platform.environment['FLUTTERFLOW_PROJECT'];
+
+  if (project == null || project.isEmpty) {
+    stderr.writeln('Error: Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.');
+    exit(1);
+  }
+
+  if (token == null || token.isEmpty) {
+    stderr.writeln('Error: Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.');
+    exit(1);
+  }
+
+  String endpoint = kDefaultEndpoint;
+  if (parsedArguments['endpoint'] != null && parsedArguments['environment'] != null) {
+    stderr.writeln('Error: Only one of --endpoint and --environment options can be set.');
+    exit(1);
+  } else if (parsedArguments['endpoint'] != null) {
+    endpoint = parsedArguments['endpoint'];
+  } else if (parsedArguments['environment'] != null) {
+    endpoint = "https://api-${parsedArguments['environment']}.flutterflow.io/v1";
+  }
+
+  return {'token': token, 'project': project, 'endpoint': endpoint};
 }
 
 void main(List<String> args) async {
