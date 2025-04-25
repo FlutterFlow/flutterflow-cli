@@ -1,3 +1,7 @@
+## 0.0.28
+
+- Update path version.
+
 ## 0.0.27
 
 - Update default endpoint.

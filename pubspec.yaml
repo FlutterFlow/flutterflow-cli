@@ -1,7 +1,7 @@
 name: flutterflow_cli
 description: >-
   Command-line client for FlutterFlow. Export code from FlutterFlow projects.
-version: 0.0.27
+version: 0.0.28
 homepage: https://github.com/FlutterFlow/flutterflow-cli
 issue_tracker: https://github.com/flutterflow/flutterflow-issues
 
@@ -13,7 +13,7 @@ dependencies:
   args: ^2.6.0
   glob: ^2.1.3
   http: ^1.3.0
-  path: ^1.9.1
+  path: ^1.9.0
 
 dev_dependencies:
   lints: ^3.0.0
