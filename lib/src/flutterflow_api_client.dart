@@ -7,7 +7,7 @@ import 'package:path/path.dart' as path_util;
 
 import 'flutterflow_ignore.dart';
 
-const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
+const kDefaultEndpoint = 'https://api.flutterflow.io/v2';
 
 /// The `FlutterFlowApi` class provides methods for exporting code from a
 /// FlutterFlow project.
@@ -179,7 +179,7 @@ Future<dynamic> _callExport({
   required bool exportAsDebug,
 }) async {
   final body = jsonEncode({
-    'project': {'path': 'projects/$projectId'},
+    'project_id': projectId,
     if (branchName != null) 'branch_name': branchName,
     if (environmentName != null) 'environment_name': environmentName,
     if (commitHash != null) 'commit': {'path': 'commits/$commitHash'},
@@ -328,7 +328,7 @@ Future firebaseDeploy({
 }) async {
   final endpointUrl = Uri.parse(endpoint);
   final body = jsonEncode({
-    'project': {'path': 'projects/$projectId'},
+    'project_id': projectId,
     'append_rules': appendRules,
   });
   final result = await _callEndpoint(
