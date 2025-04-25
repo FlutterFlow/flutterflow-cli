@@ -1,3 +1,7 @@
+## 0.0.27
+
+- Update default endpoint.
+
 ## 0.0.26
 
 - Update dependency versions.

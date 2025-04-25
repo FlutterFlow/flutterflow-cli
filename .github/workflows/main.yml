@@ -3,8 +3,8 @@ on: push
 
 env:
   # Keep this in sync with the version used by FlutterFlow.
-  DART_VERSION: 3.5.2
-  FLUTTER_VERSION: 3.24.2
+  DART_VERSION: 3.6.1
+  FLUTTER_VERSION: 3.27.3
 
 jobs:
   check:

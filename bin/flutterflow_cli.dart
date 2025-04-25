@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:flutterflow_cli/src/flutterflow_api_client.dart';
 
-const kDefaultEndpoint = 'https://api.flutterflow.io/v1';
+const kDefaultEndpoint = 'https://api.flutterflow.io/v2';
 
 Future<void> appMain(List<String> args) async {
   final parsedArguments = _parseArgs(args);
@@ -38,7 +38,7 @@ Future<void> appMain(List<String> args) async {
     endpoint = parsedArguments['endpoint'];
   } else if (parsedArguments['environment'] != null) {
     endpoint =
-        "https://api-${parsedArguments['environment']}.flutterflow.io/v1";
+        "https://api-${parsedArguments['environment']}.flutterflow.io/v2";
   } else {
     endpoint = Platform.environment['FLUTTERFLOW_ENDPOINT'] ?? kDefaultEndpoint;
   }
