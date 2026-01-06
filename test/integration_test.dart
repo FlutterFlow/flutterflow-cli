@@ -12,6 +12,10 @@ Future<bool> buildProject(String project) async {
   var result = await Process.run('flutter', ['build', 'web'],
       workingDirectory: p.normalize(project), runInShell: true);
 
+  if (result.exitCode != 0) {
+    stderr.writeln(result.stderr);
+  }
+
   return result.exitCode == 0;
 }
 
