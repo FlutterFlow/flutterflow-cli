@@ -103,7 +103,16 @@ Future<String?> exportCode({
       exportAsDebug: exportAsDebug,
     );
     // Download actual code
-    final projectZipBytes = base64Decode(result['project_zip']);
+    final List<int> projectZipBytes;
+    if (result['download_url'] != null) {
+      final response = await client.get(Uri.parse(result['download_url']));
+      if (response.statusCode != 200) {
+        throw 'Failed to download project zip from URL: ${response.statusCode}';
+      }
+      projectZipBytes = response.bodyBytes;
+    } else {
+      projectZipBytes = base64Decode(result['project_zip']);
+    }
     final projectFolder = ZipDecoder().decodeBytes(projectZipBytes);
 
     extractArchiveTo(projectFolder, destinationPath, unzipToParentFolder);
