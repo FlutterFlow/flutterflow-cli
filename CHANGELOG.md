@@ -1,3 +1,7 @@
+## 0.0.29
+
+- Add support for download_url.
+
 ## 0.0.28
 
 - Update path version.
