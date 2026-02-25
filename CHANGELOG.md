@@ -1,3 +1,7 @@
+## 0.0.30
+
+- Occasionally suggest using `--fix` flag when it's not passed.
+
 ## 0.0.29
 
 - Add support for download_url.

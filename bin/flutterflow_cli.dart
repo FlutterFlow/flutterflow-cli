@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:args/args.dart';
 import 'package:flutterflow_cli/src/flutterflow_api_client.dart';
@@ -60,6 +61,14 @@ Future<void> appMain(List<String> args) async {
           exportAsDebug: parsedArguments.command!['as-debug'],
           environmentName: parsedArguments.command!['project-environment'],
         );
+        if (!parsedArguments.command!['fix'] && Random().nextDouble() < 0.2) {
+          print(
+            '\nTip: Add --fix to automatically apply dart fix, which applies '
+            'recommended lint fixes for cleaner, more idiomatic, and '
+            'potentially more performant Dart code. Note: this makes '
+            'the export slower.',
+          );
+        }
         break;
       case 'deploy-firebase':
         await firebaseDeploy(
