@@ -1,3 +1,7 @@
+## Unreleased
+
+- Add `--include-export-manifest` to `flutterflow export-code` and forward `includeExportManifest` to the export API so the downloaded archive can include `.flutterflow/export_manifest.json`.
+
 ## 0.0.30
 
 - Occasionally suggest using `--fix` flag when it's not passed.

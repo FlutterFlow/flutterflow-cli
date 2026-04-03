@@ -12,25 +12,29 @@ Future<void> appMain(List<String> args) async {
   final token =
       parsedArguments['token'] ?? Platform.environment['FLUTTERFLOW_API_TOKEN'];
 
-  final project = parsedArguments.command!['project'] ??
+  final project =
+      parsedArguments.command!['project'] ??
       Platform.environment['FLUTTERFLOW_PROJECT'];
 
   if (project == null || project.isEmpty) {
     stderr.write(
-        'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n');
+      'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n',
+    );
     exit(1);
   }
 
   if (parsedArguments['endpoint'] != null &&
       parsedArguments['environment'] != null) {
     stderr.write(
-        'Only one of --endpoint and --environment options can be set.\n');
+      'Only one of --endpoint and --environment options can be set.\n',
+    );
     exit(1);
   }
 
   if (token?.isEmpty ?? true) {
     stderr.write(
-        'Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.\n');
+      'Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.\n',
+    );
     exit(1);
   }
 
@@ -60,6 +64,8 @@ Future<void> appMain(List<String> args) async {
           exportAsModule: parsedArguments.command!['as-module'],
           exportAsDebug: parsedArguments.command!['as-debug'],
           environmentName: parsedArguments.command!['project-environment'],
+          includeExportManifest:
+              parsedArguments.command!['include-export-manifest'],
         );
         if (!parsedArguments.command!['fix'] && Random().nextDouble() < 0.2) {
           print(
@@ -87,82 +93,96 @@ Future<void> appMain(List<String> args) async {
 }
 
 ArgResults _parseArgs(List<String> args) {
-  final exportCodeCommandParser = ArgParser()
-    ..addOption('project', abbr: 'p', help: 'Project id')
-    ..addOption(
-      'dest',
-      abbr: 'd',
-      help: 'Destination directory',
-      defaultsTo: '.',
-    )
-    ..addOption(
-      'branch-name',
-      abbr: 'b',
-      help: '(Optional) Specify a branch name',
-    )
-    ..addOption(
-      'commit-hash',
-      abbr: 'c',
-      help: '(Optional) Specify a commit hash',
-    )
-    ..addFlag(
-      'include-assets',
-      negatable: true,
-      help: 'Include assets. By default, assets are not included.\n'
-          'We recommend setting this flag only when calling this command '
-          'for the first time or after updating assets.\n'
-          'Downloading code without assets is typically much faster.',
-      defaultsTo: false,
-    )
-    ..addFlag(
-      'fix',
-      negatable: true,
-      help: 'Run "dart fix" on the downloaded code.',
-      defaultsTo: false,
-    )
-    ..addFlag(
-      'parent-folder',
-      negatable: true,
-      help: 'Download into a sub-folder. By default, project is downloaded \n'
-          'into a folder named <project>.\nSetting this flag to false will '
-          'download all project code directly into the specified directory, '
-          'or the current directory if --dest is not set.',
-      defaultsTo: true,
-    )
-    ..addFlag(
-      'as-module',
-      negatable: true,
-      help: 'Generate the project as a Flutter module.',
-      defaultsTo: false,
-    )
-    ..addFlag(
-      'as-debug',
-      negatable: true,
-      help: 'Generate the project with debug logging to be able to use '
-          'FlutterFlow Debug Panel inside the DevTools.',
-      defaultsTo: false,
-    )
-    ..addOption(
-      'project-environment',
-      help: '(Optional) Specify a project environment name.',
-    );
+  final exportCodeCommandParser =
+      ArgParser()
+        ..addOption('project', abbr: 'p', help: 'Project id')
+        ..addOption(
+          'dest',
+          abbr: 'd',
+          help: 'Destination directory',
+          defaultsTo: '.',
+        )
+        ..addOption(
+          'branch-name',
+          abbr: 'b',
+          help: '(Optional) Specify a branch name',
+        )
+        ..addOption(
+          'commit-hash',
+          abbr: 'c',
+          help: '(Optional) Specify a commit hash',
+        )
+        ..addFlag(
+          'include-assets',
+          negatable: true,
+          help:
+              'Include assets. By default, assets are not included.\n'
+              'We recommend setting this flag only when calling this command '
+              'for the first time or after updating assets.\n'
+              'Downloading code without assets is typically much faster.',
+          defaultsTo: false,
+        )
+        ..addFlag(
+          'include-export-manifest',
+          negatable: true,
+          help:
+              'Request .flutterflow/export_manifest.json in the downloaded '
+              'export so tools can map FlutterFlow entities to generated files.',
+          defaultsTo: false,
+        )
+        ..addFlag(
+          'fix',
+          negatable: true,
+          help: 'Run "dart fix" on the downloaded code.',
+          defaultsTo: false,
+        )
+        ..addFlag(
+          'parent-folder',
+          negatable: true,
+          help:
+              'Download into a sub-folder. By default, project is downloaded \n'
+              'into a folder named <project>.\nSetting this flag to false will '
+              'download all project code directly into the specified directory, '
+              'or the current directory if --dest is not set.',
+          defaultsTo: true,
+        )
+        ..addFlag(
+          'as-module',
+          negatable: true,
+          help: 'Generate the project as a Flutter module.',
+          defaultsTo: false,
+        )
+        ..addFlag(
+          'as-debug',
+          negatable: true,
+          help:
+              'Generate the project with debug logging to be able to use '
+              'FlutterFlow Debug Panel inside the DevTools.',
+          defaultsTo: false,
+        )
+        ..addOption(
+          'project-environment',
+          help: '(Optional) Specify a project environment name.',
+        );
 
-  final firebaseDeployCommandParser = ArgParser()
-    ..addOption('project', abbr: 'p', help: 'Project id')
-    ..addFlag(
-      'append-rules',
-      abbr: 'a',
-      help: 'Append to rules, instead of overwriting them.',
-      defaultsTo: false,
-    );
+  final firebaseDeployCommandParser =
+      ArgParser()
+        ..addOption('project', abbr: 'p', help: 'Project id')
+        ..addFlag(
+          'append-rules',
+          abbr: 'a',
+          help: 'Append to rules, instead of overwriting them.',
+          defaultsTo: false,
+        );
 
-  final parser = ArgParser()
-    ..addOption('endpoint', abbr: 'e', help: 'Endpoint', hide: true)
-    ..addOption('environment', help: 'Environment', hide: true)
-    ..addOption('token', abbr: 't', help: 'API Token')
-    ..addFlag('help', negatable: false, abbr: 'h', help: 'Help')
-    ..addCommand('export-code', exportCodeCommandParser)
-    ..addCommand('deploy-firebase', firebaseDeployCommandParser);
+  final parser =
+      ArgParser()
+        ..addOption('endpoint', abbr: 'e', help: 'Endpoint', hide: true)
+        ..addOption('environment', help: 'Environment', hide: true)
+        ..addOption('token', abbr: 't', help: 'API Token')
+        ..addFlag('help', negatable: false, abbr: 'h', help: 'Help')
+        ..addCommand('export-code', exportCodeCommandParser)
+        ..addCommand('deploy-firebase', firebaseDeployCommandParser);
 
   late ArgResults parsed;
   try {
