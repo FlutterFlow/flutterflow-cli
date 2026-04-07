@@ -49,21 +49,22 @@ class FlutterFlowApi {
     bool format = true,
     bool exportAsDebug = false,
     bool includeExportManifest = false,
-  }) => exportCode(
-    token: token,
-    endpoint: endpoint,
-    projectId: projectId,
-    destinationPath: destinationPath,
-    includeAssets: includeAssets,
-    branchName: branchName,
-    commitHash: commitHash,
-    unzipToParentFolder: unzipToParentFolder,
-    fix: fix,
-    exportAsModule: exportAsModule,
-    format: format,
-    exportAsDebug: exportAsDebug,
-    includeExportManifest: includeExportManifest,
-  );
+  }) =>
+      exportCode(
+        token: token,
+        endpoint: endpoint,
+        projectId: projectId,
+        destinationPath: destinationPath,
+        includeAssets: includeAssets,
+        branchName: branchName,
+        commitHash: commitHash,
+        unzipToParentFolder: unzipToParentFolder,
+        fix: fix,
+        exportAsModule: exportAsModule,
+        format: format,
+        exportAsDebug: exportAsDebug,
+        includeExportManifest: includeExportManifest,
+      );
 }
 
 Future<String?> exportCode({
@@ -305,10 +306,9 @@ Future _runFix({
     final firstFilePath = projectFolder.files.first.name;
     final directory = path_util.split(firstFilePath).first;
 
-    final workingDirectory =
-        unzipToParentFolder
-            ? path_util.join(destinationPath, directory)
-            : destinationPath;
+    final workingDirectory = unzipToParentFolder
+        ? path_util.join(destinationPath, directory)
+        : destinationPath;
     stderr.write('Running flutter pub get...\n');
     final pubGetResult = await Process.run(
       'flutter',
