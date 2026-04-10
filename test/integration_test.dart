@@ -9,8 +9,12 @@ String kProjectId = 'app-with-assets-and-custom-fonts-qxwg6o';
 String kToken = Platform.environment['FF_TESTER_TOKEN'] ?? 'not-set';
 
 Future<bool> buildProject(String project) async {
-  var result = await Process.run('flutter', ['build', 'web'],
-      workingDirectory: p.normalize(project), runInShell: true);
+  var result = await Process.run(
+    'flutter',
+    ['build', 'web'],
+    workingDirectory: p.normalize(project),
+    runInShell: true,
+  );
 
   if (result.exitCode != 0) {
     stderr.writeln(result.stderr);
@@ -108,9 +112,12 @@ void main() {
 
       // Fix will add 'const' to a lot of stuff :-)
       expect(
-          fileContains(
-              '$project/lib/main.dart', 'localizationsDelegates: const ['),
-          true);
+        fileContains(
+          '$project/lib/main.dart',
+          'localizationsDelegates: const [',
+        ),
+        true,
+      );
 
       expect(checkAssets(project), true);
 
@@ -136,9 +143,11 @@ void main() {
       ]);
 
       expect(
-          fileExists(
-              '$project/lib/pages/page_only_on_this_branch/page_only_on_this_branch_widget.dart'),
-          true);
+        fileExists(
+          '$project/lib/pages/page_only_on_this_branch/page_only_on_this_branch_widget.dart',
+        ),
+        true,
+      );
 
       expect(checkAssets(project), true);
 
@@ -164,9 +173,11 @@ void main() {
       ]);
 
       expect(
-          fileExists(
-              '$project/lib/pages/page_only_on_this_commit/page_only_on_this_commit_widget.dart'),
-          true);
+        fileExists(
+          '$project/lib/pages/page_only_on_this_commit/page_only_on_this_commit_widget.dart',
+        ),
+        true,
+      );
 
       expect(checkAssets(project), true);
 
@@ -191,8 +202,10 @@ void main() {
       ]);
 
       // Debug instrumentation added by the flag
-      expect(fileContains('$project/lib/main.dart', 'debugLogGlobalProperty'),
-          true);
+      expect(
+        fileContains('$project/lib/main.dart', 'debugLogGlobalProperty'),
+        true,
+      );
 
       expect(checkAssets(project), true);
 
@@ -242,14 +255,35 @@ void main() {
       ]);
 
       expect(
-          fileContains('$project/assets/environment_values/environment.json',
-              '"foobar": "barfoo"'),
-          true);
+        fileContains(
+          '$project/assets/environment_values/environment.json',
+          '"foobar": "barfoo"',
+        ),
+        true,
+      );
 
       expect(checkAssets(project), true);
 
       final buildResult = await buildProject(project);
       expect(buildResult, true);
+    });
+
+    test('export manifest', () async {
+      final project = 'export/export_manifest';
+
+      await appMain([
+        'export-code',
+        '--no-parent-folder',
+        '--project',
+        kProjectId,
+        '--token',
+        kToken,
+        '-d',
+        p.normalize(project),
+        '--include-export-manifest',
+      ]);
+
+      expect(fileExists('$project/.flutterflow/export_manifest.json'), true);
     });
   }, timeout: Timeout(Duration(minutes: 30)));
 }

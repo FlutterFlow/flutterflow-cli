@@ -29,6 +29,8 @@ class FlutterFlowApi {
   /// * [exportAsDebug] flag indicates whether to export the code as debug for
   /// local run.
   /// * [environmentName] is the name of the environment to export the code for.
+  /// * [includeExportManifest] flag indicates whether to include
+  /// `.flutterflow/export_manifest.json` in the export archive.
   ///
   /// Returns a [Future] that completes with the path to the exported code, or
   /// throws an error if the export fails.
@@ -46,6 +48,7 @@ class FlutterFlowApi {
     bool exportAsModule = false,
     bool format = true,
     bool exportAsDebug = false,
+    bool includeExportManifest = false,
   }) =>
       exportCode(
         token: token,
@@ -60,6 +63,7 @@ class FlutterFlowApi {
         exportAsModule: exportAsModule,
         format: format,
         exportAsDebug: exportAsDebug,
+        includeExportManifest: includeExportManifest,
       );
 }
 
@@ -77,11 +81,13 @@ Future<String?> exportCode({
   String? environmentName,
   String? commitHash,
   bool exportAsDebug = false,
+  bool includeExportManifest = false,
 }) async {
   stderr.write('Downloading code with the FlutterFlow CLI...\n');
   stderr.write('You are exporting project $projectId.\n');
   stderr.write(
-      '${branchName != null ? 'Branch: $branchName ' : ''}${environmentName != null ? 'Environment: $environmentName ' : ''}${commitHash != null ? 'Commit: $commitHash' : ''}\n');
+    '${branchName != null ? 'Branch: $branchName ' : ''}${environmentName != null ? 'Environment: $environmentName ' : ''}${commitHash != null ? 'Commit: $commitHash' : ''}\n',
+  );
   if (exportAsDebug && exportAsModule) {
     throw 'Cannot export as module and debug at the same time.';
   }
@@ -101,6 +107,7 @@ Future<String?> exportCode({
       includeAssets: includeAssets,
       format: format,
       exportAsDebug: exportAsDebug,
+      includeExportManifest: includeExportManifest,
     );
     // Download actual code
     final List<int> projectZipBytes;
@@ -149,13 +156,17 @@ Future<String?> exportCode({
 // Extract files to the specified directory without a project-named
 // parent folder.
 void extractArchiveTo(
-    Archive projectFolder, String destinationPath, bool unzipToParentFolder) {
+  Archive projectFolder,
+  String destinationPath,
+  bool unzipToParentFolder,
+) {
   final ignore = FlutterFlowIgnore(path: destinationPath);
 
   for (final file in projectFolder.files) {
     if (file.isFile) {
-      final relativeFilename =
-          path_util.joinAll(path_util.split(file.name).sublist(1));
+      final relativeFilename = path_util.joinAll(
+        path_util.split(file.name).sublist(1),
+      );
 
       // Found on .flutterflowignore, move on.
       if (ignore.matches(unzipToParentFolder ? file.name : relativeFilename)) {
@@ -165,7 +176,9 @@ void extractArchiveTo(
 
       // Remove the `<project>` prefix from paths if needed.
       final path = path_util.join(
-          destinationPath, unzipToParentFolder ? file.name : relativeFilename);
+        destinationPath,
+        unzipToParentFolder ? file.name : relativeFilename,
+      );
 
       final fileOut = File(path);
       fileOut.createSync(recursive: true);
@@ -186,6 +199,7 @@ Future<dynamic> _callExport({
   required bool includeAssets,
   required bool format,
   required bool exportAsDebug,
+  required bool includeExportManifest,
 }) async {
   final body = jsonEncode({
     'project_id': projectId,
@@ -196,6 +210,7 @@ Future<dynamic> _callExport({
     'include_assets_map': includeAssets,
     'format': format,
     'export_as_debug': exportAsDebug,
+    'includeExportManifest': includeExportManifest,
   });
   return await _callEndpoint(
     client: client,
@@ -258,9 +273,7 @@ Future _downloadAssets({
     String path = assetDescription['path'];
 
     if (!unzipToParentFolder) {
-      path = path_util.joinAll(
-        path_util.split(path).sublist(1),
-      );
+      path = path_util.joinAll(path_util.split(path).sublist(1));
     }
     final url = assetDescription['url'];
     final fileDest = path_util.join(destinationPath, path);
@@ -307,7 +320,8 @@ Future _runFix({
     );
     if (pubGetResult.exitCode != 0) {
       stderr.write(
-          '"flutter pub get" failed with code ${pubGetResult.exitCode}, stderr:\n${pubGetResult.stderr}\n');
+        '"flutter pub get" failed with code ${pubGetResult.exitCode}, stderr:\n${pubGetResult.stderr}\n',
+      );
       return;
     }
     stderr.write('Running dart fix...\n');
@@ -322,7 +336,8 @@ Future _runFix({
     );
     if (dartFixResult.exitCode != 0) {
       stderr.write(
-          '"dart fix" failed with code ${dartFixResult.exitCode}, stderr:\n${dartFixResult.stderr}\n');
+        '"dart fix" failed with code ${dartFixResult.exitCode}, stderr:\n${dartFixResult.stderr}\n',
+      );
     }
   } catch (e) {
     stderr.write('Error running "dart fix": $e\n');
@@ -344,7 +359,9 @@ Future firebaseDeploy({
     client: http.Client(),
     token: token,
     url: Uri.https(
-        endpointUrl.host, '${endpointUrl.path}/exportFirebaseDeployCode'),
+      endpointUrl.host,
+      '${endpointUrl.path}/exportFirebaseDeployCode',
+    ),
     body: body,
   );
 
@@ -355,8 +372,9 @@ Future firebaseDeploy({
   Directory? tmpFolder;
 
   try {
-    tmpFolder =
-        Directory.systemTemp.createTempSync('${projectId}_$firebaseProjectId');
+    tmpFolder = Directory.systemTemp.createTempSync(
+      '${projectId}_$firebaseProjectId',
+    );
     extractArchiveTo(projectFolder, tmpFolder.path, false);
     final firebaseDir = '${tmpFolder.path}/firebase';
 

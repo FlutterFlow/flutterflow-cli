@@ -14,7 +14,7 @@ API access is available only to users with active subscriptions. Visit https://a
 
 ### Usage
 
-`flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token> --[no-]fix --[no-]parent-folder --[no-]as-module --[no-]as-debug`
+`flutterflow export-code --project <project id> --dest <output folder> --[no-]include-assets --token <token> --[no-]fix --[no-]parent-folder --[no-]as-module --[no-]as-debug --[no-]include-export-manifest`
 
 * Instead of passing `--token` you can set `FLUTTERFLOW_API_TOKEN` environment variable.
 * Instead of passing `--project` you can set `FLUTTERFLOW_PROJECT` environment variable.
@@ -30,6 +30,7 @@ with a list of files to be ignored using [globbing syntax](https://pub.dev/packa
 | `--token`      | `-t`       | [Required or environment variable] API Token. |
 | `--dest`   | `-d`        | [Optional] Output folder. Defaults to the current directory if none is specified. |
 | `--[no-]include-assets`   | None        | [Optional] Whether to include media assets. Defaults to `false`. |
+| `--[no-]include-export-manifest`   | None        | [Optional] Whether to include `.flutterflow/export_manifest.json` so tools can map FlutterFlow entities to generated files. Defaults to `false`. |
 | `--branch-name`   | `-b`        | [Optional] Which branch to download. Defaults to `main`. |
 | `--[no-]fix`   | None        | [Optional] Whether to run `dart fix` on the downloaded code. Defaults to `false`. |
 | `--[no-]parent-folder`   | None        | [Optional] Whether to download code into a project-named sub-folder. If true, downloads all project files directly to the specified directory. Defaults to `true`. |

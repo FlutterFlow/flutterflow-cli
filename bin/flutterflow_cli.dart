@@ -17,20 +17,23 @@ Future<void> appMain(List<String> args) async {
 
   if (project == null || project.isEmpty) {
     stderr.write(
-        'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n');
+      'Either --project option or FLUTTERFLOW_PROJECT environment variable must be set.\n',
+    );
     exit(1);
   }
 
   if (parsedArguments['endpoint'] != null &&
       parsedArguments['environment'] != null) {
     stderr.write(
-        'Only one of --endpoint and --environment options can be set.\n');
+      'Only one of --endpoint and --environment options can be set.\n',
+    );
     exit(1);
   }
 
   if (token?.isEmpty ?? true) {
     stderr.write(
-        'Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.\n');
+      'Either --token option or FLUTTERFLOW_API_TOKEN environment variable must be set.\n',
+    );
     exit(1);
   }
 
@@ -60,6 +63,8 @@ Future<void> appMain(List<String> args) async {
           exportAsModule: parsedArguments.command!['as-module'],
           exportAsDebug: parsedArguments.command!['as-debug'],
           environmentName: parsedArguments.command!['project-environment'],
+          includeExportManifest:
+              parsedArguments.command!['include-export-manifest'],
         );
         if (!parsedArguments.command!['fix'] && Random().nextDouble() < 0.2) {
           print(
@@ -112,6 +117,13 @@ ArgResults _parseArgs(List<String> args) {
           'We recommend setting this flag only when calling this command '
           'for the first time or after updating assets.\n'
           'Downloading code without assets is typically much faster.',
+      defaultsTo: false,
+    )
+    ..addFlag(
+      'include-export-manifest',
+      negatable: true,
+      help: 'Request .flutterflow/export_manifest.json in the downloaded '
+          'export so tools can map FlutterFlow entities to generated files.',
       defaultsTo: false,
     )
     ..addFlag(
